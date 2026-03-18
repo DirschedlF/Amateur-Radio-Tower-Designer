@@ -7,6 +7,7 @@ import WindLoadCalc from './calculators/windload/WindLoadCalc.jsx'
 export default function App() {
   const [activeCalc, setActiveCalc] = useState('guywire')
   const [windLoadSnapshot, setWindLoadSnapshot] = useState(null)
+  const [sharedMastHeight, setSharedMastHeight] = useState(12)
   const { t, toggleLang } = useLanguage()
 
   return (
@@ -34,10 +35,16 @@ export default function App() {
             <GuyWireCalc
               windLoadSnapshot={windLoadSnapshot}
               onNavigateToWindLoad={() => setActiveCalc('windload')}
+              mastHeight={sharedMastHeight}
+              onMastHeightChange={setSharedMastHeight}
             />
           </div>
           <div className={activeCalc === 'windload' ? '' : 'hidden'}>
-            <WindLoadCalc onWindLoadChange={setWindLoadSnapshot} />
+            <WindLoadCalc
+              onWindLoadChange={setWindLoadSnapshot}
+              mastHeight={sharedMastHeight}
+              onMastHeightChange={setSharedMastHeight}
+            />
           </div>
         </main>
       </div>

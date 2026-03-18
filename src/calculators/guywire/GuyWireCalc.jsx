@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import GuyWireInputs from './GuyWireInputs.jsx'
 import GuyWireDiagram from './GuyWireDiagram.jsx'
 import GuyWireResults from './GuyWireResults.jsx'
@@ -15,8 +15,18 @@ const DEFAULT_CONFIG = {
   ],
 }
 
-export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindLoad = () => {} }) {
+export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindLoad = () => {}, mastHeight = null, onMastHeightChange = () => {} }) {
   const [config, setConfig] = useState(DEFAULT_CONFIG)
+
+  useEffect(() => {
+    if (mastHeight === null) return
+    setConfig(c => c.mastHeight === mastHeight ? c : { ...c, mastHeight })
+  }, [mastHeight])
+
+  function handleConfigChange(newConfig) {
+    if (newConfig.mastHeight !== config.mastHeight) onMastHeightChange(newConfig.mastHeight)
+    setConfig(newConfig)
+  }
 
   const results = useMemo(() => {
     try {
@@ -28,7 +38,7 @@ export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindL
 
   return (
     <div className="flex flex-col gap-4">
-      <GuyWireInputs config={config} onChange={setConfig} />
+      <GuyWireInputs config={config} onChange={handleConfigChange} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <GuyWireDiagram config={config} results={results} />

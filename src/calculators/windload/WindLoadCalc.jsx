@@ -12,9 +12,27 @@ const DEFAULT_CONFIG = {
   antenna: { area: 0.5, cw: 0.8, mountHeight: 11 },
 }
 
-export default function WindLoadCalc({ onWindLoadChange = () => {} }) {
+export default function WindLoadCalc({ onWindLoadChange = () => {}, mastHeight = null, onMastHeightChange = () => {} }) {
   const [config, setConfig] = useState(DEFAULT_CONFIG)
   const { t } = useLanguage()
+
+  useEffect(() => {
+    if (mastHeight === null) return
+    setConfig(c => {
+      if (c.mast.height === mastHeight) return c
+      const clampedMount = Math.min(c.antenna.mountHeight, mastHeight)
+      return { ...c, mast: { ...c.mast, height: mastHeight }, antenna: { ...c.antenna, mountHeight: clampedMount } }
+    })
+  }, [mastHeight])
+
+  function handleConfigChange(newConfig) {
+    const clampedMount = Math.min(newConfig.antenna.mountHeight, newConfig.mast.height)
+    const final = clampedMount === newConfig.antenna.mountHeight
+      ? newConfig
+      : { ...newConfig, antenna: { ...newConfig.antenna, mountHeight: clampedMount } }
+    if (final.mast.height !== config.mast.height) onMastHeightChange(final.mast.height)
+    setConfig(final)
+  }
 
   const memoised = useMemo(() => {
     try {
@@ -51,7 +69,7 @@ export default function WindLoadCalc({ onWindLoadChange = () => {} }) {
 
   return (
     <div className="flex flex-col gap-4">
-      <WindLoadInputs config={config} onChange={setConfig} />
+      <WindLoadInputs config={config} onChange={handleConfigChange} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <WindLoadDiagram config={config} results={memoised?.results ?? null} />

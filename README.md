@@ -3,7 +3,7 @@
 A browser-based calculator suite for amateur radio antenna installations.
 Built with React + Vite + Tailwind CSS, available as a standard SPA or as a single offline HTML file.
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 
 ---
 
@@ -25,6 +25,26 @@ Calculates geometry for guyed masts with 1, 2, or 3 wire levels.
 - Grand total across all levels
 
 Side-view SVG diagram with color-coded wire levels included.
+
+### Wind Load Calculator
+
+Calculates wind forces and bending moments for telescoping conical masts (Schiebemast) with mounted antennas. Uses simplified formula without specific norm.
+
+**Inputs:**
+
+- Wind speed (m/s) or dynamic pressure (N/m²) — live sync
+- Gust factor (applied to dynamic pressure, default 1.7)
+- Mast: height, bottom diameter, top diameter (mm), drag coefficient cw
+- Antenna: projected area (m²), drag coefficient cw, mounting height (m)
+
+**Outputs:**
+
+- Dynamic pressure q (N/m²)
+- Wind force on mast and antenna separately (N)
+- Total wind force (N)
+- Bending moments at mast base for mast, antenna, and total (Nm)
+
+SVG side-view diagram with force arrows at centroid heights included.
 
 ---
 
@@ -65,4 +85,4 @@ The UI supports German and English. Toggle in the top-right corner; preference i
 ## Planned
 
 - Force and load calculations for guy wires
-- Additional antenna calculators
+- Grounding calculator

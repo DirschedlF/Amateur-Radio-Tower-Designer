@@ -41,7 +41,7 @@ export default function GuyWireInputs({ config, onChange }) {
         <div>
           <label className="block text-xs text-slate-500 mb-1">{t('levels')}</label>
           <div className="flex gap-1">
-            {[2, 3, 4].map(n => (
+            {[1, 2, 3].map(n => (
               <button
                 key={n}
                 onClick={() => setField('levels', n)}

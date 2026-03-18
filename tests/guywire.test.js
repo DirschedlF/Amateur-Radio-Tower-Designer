@@ -60,7 +60,14 @@ describe('calculateGuyWires', () => {
     expect(result.levels[1].totalLengthPerLevel).toBeCloseTo(13.601 * 3, 1)
   })
 
-  it('supports 3 and 4 levels', () => {
+  it('supports 1, 2 and 3 levels', () => {
+    const config1 = {
+      mastHeight: 12,
+      levels: 1,
+      levelConfig: [{ height: 6, radius: 5, wires: 3 }],
+    }
+    expect(calculateGuyWires(config1).levels).toHaveLength(1)
+
     const config3 = {
       mastHeight: 18,
       levels: 3,
@@ -70,8 +77,8 @@ describe('calculateGuyWires', () => {
         { height: 17, radius: 10, wires: 3 },
       ],
     }
-    const result = calculateGuyWires(config3)
-    expect(result.levels).toHaveLength(3)
-    expect(result.grandTotalLength).toBeGreaterThan(0)
+    const result3 = calculateGuyWires(config3)
+    expect(result3.levels).toHaveLength(3)
+    expect(result3.grandTotalLength).toBeGreaterThan(0)
   })
 })

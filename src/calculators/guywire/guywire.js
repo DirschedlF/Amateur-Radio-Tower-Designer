@@ -3,7 +3,7 @@
  *
  * @param {object} config
  * @param {number} config.mastHeight   - Total mast height in meters
- * @param {number} config.levels       - Number of guy wire levels (2, 3 or 4)
+ * @param {number} config.levels       - Number of guy wire levels (1, 2 or 3)
  * @param {Array}  config.levelConfig  - Per-level settings
  * @param {number} config.levelConfig[].height  - Height of attachment point (m)
  * @param {number} config.levelConfig[].radius  - Horizontal anchor distance (m)

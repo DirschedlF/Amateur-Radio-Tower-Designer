@@ -11,7 +11,6 @@ const DEFAULT_CONFIG = {
     { height: 6,  radius: 5,  wires: 3 },
     { height: 11, radius: 8,  wires: 3 },
     { height: 0,  radius: 0,  wires: 3 },
-    { height: 0,  radius: 0,  wires: 3 },
   ],
 }
 

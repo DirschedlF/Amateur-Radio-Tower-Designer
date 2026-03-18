@@ -81,4 +81,12 @@ describe('calculateGuyWires', () => {
     expect(result3.levels).toHaveLength(3)
     expect(result3.grandTotalLength).toBeGreaterThan(0)
   })
+
+  it('exposes height and radius in each level result', () => {
+    const result = calculateGuyWires(baseConfig)
+    expect(result.levels[0].height).toBe(6)
+    expect(result.levels[0].radius).toBe(5)
+    expect(result.levels[1].height).toBe(11)
+    expect(result.levels[1].radius).toBe(8)
+  })
 })

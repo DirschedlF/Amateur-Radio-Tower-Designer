@@ -19,6 +19,8 @@ export function calculateGuyWires({ mastHeight, levels, levelConfig }) { // esli
     const totalLengthPerLevel = wireLength * wires
 
     return {
+      height,
+      radius,
       wireLength,
       angleFromHorizontal,
       angleFromMast,

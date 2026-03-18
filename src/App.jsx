@@ -30,15 +30,15 @@ export default function App() {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar activeCalc={activeCalc} onSelect={setActiveCalc} />
         <main className="flex-1 overflow-auto p-4">
-          {activeCalc === 'guywire' && (
+          <div className={activeCalc === 'guywire' ? '' : 'hidden'}>
             <GuyWireCalc
               windLoadSnapshot={windLoadSnapshot}
               onNavigateToWindLoad={() => setActiveCalc('windload')}
             />
-          )}
-          {activeCalc === 'windload' && (
+          </div>
+          <div className={activeCalc === 'windload' ? '' : 'hidden'}>
             <WindLoadCalc onWindLoadChange={setWindLoadSnapshot} />
-          )}
+          </div>
         </main>
       </div>
     </div>

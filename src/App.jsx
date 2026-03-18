@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { useLanguage } from './hooks/useLanguage.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import GuyWireCalc from './calculators/guywire/GuyWireCalc.jsx'
+import WindLoadCalc from './calculators/windload/WindLoadCalc.jsx'
 
 const CALC_COMPONENTS = {
   guywire: GuyWireCalc,
+  windload: WindLoadCalc,
 }
 
 export default function App() {

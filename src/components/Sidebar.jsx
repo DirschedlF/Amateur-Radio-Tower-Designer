@@ -2,10 +2,10 @@ import { useLanguage } from '../hooks/useLanguage.jsx'
 
 const CALCULATORS = [
   { id: 'guywire', labelKey: 'calcGuyWire', subtitleKey: 'calcGuyWireSubtitle', active: true },
+  { id: 'windload', labelKey: 'calcWindLoad', subtitleKey: 'calcWindLoadSubtitle', active: true },
 ]
 
 const COMING_SOON = [
-  { id: 'windload', labelKey: 'calcWindLoad' },
   { id: 'grounding', labelKey: 'calcGrounding' },
 ]
 

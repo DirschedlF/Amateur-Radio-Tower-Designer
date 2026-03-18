@@ -38,6 +38,7 @@ export const translations = {
     // Wind Load Calculator
     calcWindLoadSubtitle: 'Kräfte & Momente',
     windSection: 'Wind',
+    gustFactor: 'Böenfaktor',
     mastSection: 'Mast',
     antennaSection: 'Antenne',
     windSpeed: 'Windgeschwindigkeit',
@@ -105,6 +106,7 @@ export const translations = {
     // Wind Load Calculator
     calcWindLoadSubtitle: 'Forces & Moments',
     windSection: 'Wind',
+    gustFactor: 'Gust Factor',
     mastSection: 'Mast',
     antennaSection: 'Antenna',
     windSpeed: 'Wind Speed',

@@ -14,6 +14,13 @@ describe('calculateWindLoad', () => {
     expect(result.q).toBeCloseTo(250, 1)
   })
 
+  it('applies gust factor to dynamic pressure', () => {
+    // q = 0.5 * 1.25 * 20² * 1.7 = 425 N/m²
+    const result = calculateWindLoad({ ...baseConfig, gustFactor: 1.7 })
+    expect(result.q).toBeCloseTo(425, 1)
+    expect(result.mast.force).toBeCloseTo(result.mast.area * 425 * baseConfig.mast.cw, 2)
+  })
+
   it('calculates mast projected area as trapezoid', () => {
     // A = (0.1 + 0.06) / 2 * 10 = 0.8 m²
     const result = calculateWindLoad(baseConfig)

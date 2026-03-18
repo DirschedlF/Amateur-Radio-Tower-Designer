@@ -30,7 +30,7 @@ export default function WindLoadInputs({ config, onChange }) {
           windSpeed is canonical state. The q field converts back on blur (not onChange)
           to avoid cursor-jumping during partial input — same known limitation as other
           number fields in this app (see CLAUDE.md: "clearing a field falls back to 0"). */}
-      <div className="grid grid-cols-2 gap-3 mb-4">
+      <div className="grid grid-cols-3 gap-3 mb-4">
         <div>
           <label className="block text-xs text-slate-500 mb-1">
             {t('windSpeed')} ({t('unit_ms')})
@@ -58,6 +58,17 @@ export default function WindLoadInputs({ config, onChange }) {
               const q = parseFloat(e.target.value) || 0
               setTop('windSpeed', parseFloat(Math.sqrt(2 * q / 1.25).toFixed(2)) || 0)
             }}
+            className={INPUT_CLASS}
+          />
+        </div>
+        <div>
+          <label className="block text-xs text-slate-500 mb-1">{t('gustFactor')}</label>
+          <input
+            type="number"
+            min="1"
+            step="0.1"
+            value={config.gustFactor}
+            onChange={e => setTop('gustFactor', parseFloat(e.target.value) || 1)}
             className={INPUT_CLASS}
           />
         </div>

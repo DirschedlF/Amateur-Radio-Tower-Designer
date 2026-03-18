@@ -3,6 +3,7 @@
  *
  * @param {object} config
  * @param {number} config.windSpeed       - Wind velocity (m/s)
+ * @param {number} [config.gustFactor=1]  - Gust factor applied to dynamic pressure (default: 1 = no gust)
  * @param {object} config.mast
  * @param {number} config.mast.height     - Mast height (m)
  * @param {number} config.mast.diamBottom - Diameter at base (m)
@@ -15,8 +16,8 @@
  *
  * @returns {{ q, mast: { area, force, momentArm, moment }, antenna: { force, moment }, total: { force, moment } }}
  */
-export function calculateWindLoad({ windSpeed, mast, antenna }) {
-  const q = 0.5 * 1.25 * windSpeed ** 2
+export function calculateWindLoad({ windSpeed, gustFactor = 1, mast, antenna }) {
+  const q = 0.5 * 1.25 * windSpeed ** 2 * gustFactor
 
   const area = ((mast.diamBottom + mast.diamTop) / 2) * mast.height
   const mastForce = q * area * mast.cw

@@ -6,6 +6,7 @@ import { calculateWindLoad } from './windload.js'
 
 const DEFAULT_CONFIG = {
   windSpeed: 28,
+  gustFactor: 1.7,
   mast: { height: 12, diamBottomMm: 100, diamTopMm: 60, cw: 1.1 },
   antenna: { area: 0.5, cw: 0.8, mountHeight: 11 },
 }
@@ -17,6 +18,7 @@ export default function WindLoadCalc() {
     try {
       return calculateWindLoad({
         windSpeed: config.windSpeed,
+        gustFactor: config.gustFactor,
         mast: {
           height: config.mast.height,
           diamBottom: config.mast.diamBottomMm / 1000,

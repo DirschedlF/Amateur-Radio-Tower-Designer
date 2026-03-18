@@ -6,7 +6,7 @@ import { calculateWindLoad } from './windload.js'
 
 const DEFAULT_CONFIG = {
   windSpeed: 28,
-  mast: { height: 12, diamBottomMm: 100, diamTopMm: 60, cw: 0.8 },
+  mast: { height: 12, diamBottomMm: 100, diamTopMm: 60, cw: 1.1 },
   antenna: { area: 0.5, cw: 0.8, mountHeight: 11 },
 }
 

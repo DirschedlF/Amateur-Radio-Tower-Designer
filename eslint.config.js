@@ -12,7 +12,7 @@ export default [
       'react-hooks': reactHooks,
     },
     languageOptions: {
-      globals: { ...globals.browser, ...globals.es2020 },
+      globals: { ...globals.browser, ...globals.node, ...globals.es2020 },
       parserOptions: { ecmaVersion: 'latest', sourceType: 'module', ecmaFeatures: { jsx: true } },
     },
     settings: { react: { version: '18.2' } },

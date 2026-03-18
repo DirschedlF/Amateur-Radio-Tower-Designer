@@ -4,16 +4,10 @@ import Sidebar from './components/Sidebar.jsx'
 import GuyWireCalc from './calculators/guywire/GuyWireCalc.jsx'
 import WindLoadCalc from './calculators/windload/WindLoadCalc.jsx'
 
-const CALC_COMPONENTS = {
-  guywire: GuyWireCalc,
-  windload: WindLoadCalc,
-}
-
 export default function App() {
   const [activeCalc, setActiveCalc] = useState('guywire')
+  const [windLoadSnapshot, setWindLoadSnapshot] = useState(null)
   const { t, toggleLang } = useLanguage()
-
-  const ActiveCalc = CALC_COMPONENTS[activeCalc]
 
   return (
     <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col">
@@ -22,7 +16,7 @@ export default function App() {
         <div className="flex items-center gap-3">
           <span className="text-amber-400 text-xl">📡</span>
           <span className="font-semibold text-slate-100">{t('appTitle')}</span>
-          <span className="text-xs text-slate-500 font-mono">v0.2.0</span>
+          <span className="text-xs text-slate-500 font-mono">v0.3.0</span>
         </div>
         <button
           onClick={toggleLang}
@@ -36,7 +30,15 @@ export default function App() {
       <div className="flex flex-1 overflow-hidden">
         <Sidebar activeCalc={activeCalc} onSelect={setActiveCalc} />
         <main className="flex-1 overflow-auto p-4">
-          {ActiveCalc && <ActiveCalc />}
+          {activeCalc === 'guywire' && (
+            <GuyWireCalc
+              windLoadSnapshot={windLoadSnapshot}
+              onNavigateToWindLoad={() => setActiveCalc('windload')}
+            />
+          )}
+          {activeCalc === 'windload' && (
+            <WindLoadCalc onWindLoadChange={setWindLoadSnapshot} />
+          )}
         </main>
       </div>
     </div>

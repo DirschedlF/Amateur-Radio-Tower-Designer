@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import GuyWireInputs from './GuyWireInputs.jsx'
 import GuyWireDiagram from './GuyWireDiagram.jsx'
 import GuyWireResults from './GuyWireResults.jsx'
+import GuyWireLoad from './GuyWireLoad.jsx'
 import { calculateGuyWires } from './guywire.js'
 
 const DEFAULT_CONFIG = {
@@ -14,7 +15,7 @@ const DEFAULT_CONFIG = {
   ],
 }
 
-export default function GuyWireCalc() {
+export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindLoad = () => {} }) {
   const [config, setConfig] = useState(DEFAULT_CONFIG)
 
   const results = useMemo(() => {
@@ -33,6 +34,12 @@ export default function GuyWireCalc() {
         <GuyWireDiagram config={config} results={results} />
         <GuyWireResults results={results} />
       </div>
+
+      <GuyWireLoad
+        windLoadSnapshot={windLoadSnapshot}
+        geoResults={results}
+        onNavigateToWindLoad={onNavigateToWindLoad}
+      />
     </div>
   )
 }

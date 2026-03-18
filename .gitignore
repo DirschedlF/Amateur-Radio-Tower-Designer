@@ -2,3 +2,6 @@ node_modules/
 dist/
 dist-standalone/
 .superpowers/
+
+# Git worktrees
+.worktrees/

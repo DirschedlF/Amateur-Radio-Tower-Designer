@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useLanguage } from './hooks/useLanguage.js'
+import { useLanguage } from './hooks/useLanguage.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import GuyWireCalc from './calculators/guywire/GuyWireCalc.jsx'
 

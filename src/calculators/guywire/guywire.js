@@ -11,7 +11,7 @@
  *
  * @returns {{ levels: Array, grandTotalLength: number }}
  */
-export function calculateGuyWires({ levels, levelConfig }) {
+export function calculateGuyWires({ mastHeight, levels, levelConfig }) { // eslint-disable-line no-unused-vars
   const levelResults = levelConfig.slice(0, levels).map(({ height, radius, wires }) => {
     const wireLength = Math.sqrt(height ** 2 + radius ** 2)
     const angleFromHorizontal = (Math.atan2(height, radius) * 180) / Math.PI

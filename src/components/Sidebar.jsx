@@ -1,4 +1,4 @@
-import { useLanguage } from '../hooks/useLanguage.js'
+import { useLanguage } from '../hooks/useLanguage.jsx'
 
 const CALCULATORS = [
   { id: 'guywire', labelKey: 'calcGuyWire', subtitleKey: 'calcGuyWireSubtitle', active: true },

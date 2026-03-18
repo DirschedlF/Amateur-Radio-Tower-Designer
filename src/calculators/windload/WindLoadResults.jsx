@@ -35,7 +35,7 @@ export default function WindLoadResults({ results }) {
           <tr>
             <td className="py-2 pr-3 font-medium text-emerald-400">{t('rowMast')}</td>
             <td className="py-2 pr-3 text-right text-slate-200 whitespace-nowrap">{fmt(results.mast.force)} {t('unit_n')}</td>
-            <td className="py-2 pr-3 text-right text-slate-200">{fmt(results.mast.momentArm)} m</td>
+            <td className="py-2 pr-3 text-right text-slate-200">{fmt(results.mast.momentArm)} {t('unit_m')}</td>
             <td className="py-2 text-right text-slate-200 whitespace-nowrap">{fmt(results.mast.moment)} {t('unit_nm')}</td>
           </tr>
           <tr className="bg-slate-900/30">

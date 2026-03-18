@@ -19,11 +19,11 @@ export default function GuyWireResults({ results }) {
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="text-xs text-slate-500">
-            <th className="text-left pb-2 border-b border-slate-700 pr-3">{t('colLevel')}</th>
-            <th className="text-right pb-2 border-b border-slate-700 pr-3">{t('colWireLength')}</th>
-            <th className="text-right pb-2 border-b border-slate-700 pr-3">{t('colAngleH')}</th>
-            <th className="text-right pb-2 border-b border-slate-700 pr-3">{t('colAngleM')}</th>
-            <th className="text-right pb-2 border-b border-slate-700">{t('colTotalLevel')}</th>
+            <th className="text-left pb-2 border-b border-slate-700 pr-3 whitespace-nowrap">{t('colLevel')}</th>
+            <th className="text-right pb-2 border-b border-slate-700 pr-3 whitespace-nowrap">{t('colWireLength')}</th>
+            <th className="text-right pb-2 border-b border-slate-700 pr-3 whitespace-nowrap">{t('colAngleH')}</th>
+            <th className="text-right pb-2 border-b border-slate-700 pr-3 whitespace-nowrap">{t('colAngleM')}</th>
+            <th className="text-right pb-2 border-b border-slate-700 whitespace-nowrap">{t('colTotalLevel')}</th>
           </tr>
         </thead>
         <tbody>
@@ -32,7 +32,7 @@ export default function GuyWireResults({ results }) {
               <td className={`py-2 pr-3 font-medium ${LEVEL_COLORS[i]}`}>
                 {i + 1}
               </td>
-              <td className="py-2 pr-3 text-right text-slate-200">
+              <td className="py-2 pr-3 text-right text-slate-200 whitespace-nowrap">
                 {fmt(level.wireLength)} {t('unit_m')}
                 <span className="text-slate-500 text-xs ml-1">({t('perWire')})</span>
               </td>

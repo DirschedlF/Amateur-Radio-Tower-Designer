@@ -26,7 +26,7 @@ export default function GuyWireCalc() {
   }, [config])
 
   return (
-    <div className="flex flex-col gap-4 max-w-4xl">
+    <div className="flex flex-col gap-4">
       <GuyWireInputs config={config} onChange={setConfig} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

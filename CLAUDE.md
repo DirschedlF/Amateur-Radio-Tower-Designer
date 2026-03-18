@@ -30,9 +30,10 @@ React 18 + Vite 7 + Tailwind CSS 3 (dark theme). ESLint 9 flat config (`eslint.c
 - Child components (`<Name>Inputs.jsx`, `<Name>Diagram.jsx`, `<Name>Results.jsx`) receive props only
 
 **Guy Wire Calculator** (first calculator, geometric only — force/load calculations planned):
-- Inputs: mast height, 2/3/4 guy wire levels, per-level height + anchor radius + wire count (3 or 4)
+- Inputs: mast height, 1/2/3 guy wire levels, per-level height + anchor radius + wire count (3 or 4)
 - Outputs: wire length, angle from horizontal, angle from mast, total per level, grand total
 - SVG side-view diagram + results table, both color-coded by level
+- Layout: `GuyWireCalc.jsx` uses no `max-w-*` on the outer wrapper — the results table needs full width to fit all German column headers without wrapping (`whitespace-nowrap` on `<th>` and wire-length `<td>`)
 
 ## Known Debt
 

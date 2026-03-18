@@ -141,18 +141,16 @@ export default function WindLoadInputs({ config, onChange }) {
           />
         </div>
         <div>
-          <label className="block text-xs text-slate-500 mb-1">
-            {t('mountHeight')} (m)
-            <span className="block text-slate-600 normal-case text-xs font-normal leading-tight mt-0.5">
-              {t('mountHeightHint')}
-            </span>
-          </label>
+          <label className="block text-xs text-slate-500 mb-1">{t('mountHeight')} (m)</label>
           <input
             type="number" min="0" step="0.5"
             value={config.antenna.mountHeight}
             onChange={e => setAntenna('mountHeight', parseFloat(e.target.value) || 0)}
             className={INPUT_CLASS}
           />
+          <span className="block text-slate-600 text-xs leading-tight mt-1">
+            {t('mountHeightHint')}
+          </span>
         </div>
       </div>
     </div>

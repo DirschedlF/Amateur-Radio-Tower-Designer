@@ -9,7 +9,7 @@ export default defineConfig({
     react(),
     ...(isSingleFile ? [viteSingleFile()] : []),
   ],
-  base: isSingleFile ? './' : '/',
+  base: isSingleFile ? './' : (process.env.GITHUB_ACTIONS ? '/Amateur-Radio-Tower-Designer/' : '/'),
   build: {
     outDir: isSingleFile ? 'dist-standalone' : 'dist',
   },

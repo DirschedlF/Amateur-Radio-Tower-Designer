@@ -5,10 +5,6 @@ const CALCULATORS = [
   { id: 'windload', labelKey: 'calcWindLoad', subtitleKey: 'calcWindLoadSubtitle', active: true },
 ]
 
-const COMING_SOON = [
-  { id: 'grounding', labelKey: 'calcGrounding' },
-]
-
 export default function Sidebar({ activeCalc, onSelect }) {
   const { t } = useLanguage()
 
@@ -35,19 +31,6 @@ export default function Sidebar({ activeCalc, onSelect }) {
             </div>
           )}
         </button>
-      ))}
-
-      <p className="px-3 mt-4 mb-2 text-xs uppercase tracking-widest text-slate-500">
-        {t('sidebarComingSoon')}
-      </p>
-
-      {COMING_SOON.map(calc => (
-        <div
-          key={calc.id}
-          className="mx-2 mb-1 rounded-md px-3 py-2 opacity-35 cursor-default"
-        >
-          <div className="text-sm text-slate-400">{t(calc.labelKey)}</div>
-        </div>
       ))}
     </aside>
   )

@@ -66,6 +66,7 @@ export const translations = {
     unit_knm: 'kNm',
     windLoadResultsTitle: 'Windlast-Ergebnisse',
     windLoadDiagramTitle: 'Windlast-Diagramm',
+    windLoadDisclaimer: 'Diese Berechnung dient als technische Abschätzung für Planungszwecke ohne Gewähr und Haftung. Für eine genehmigte statische Auslegung (z.\u202fB. bei Aufstellung auf Gebäuden oder als Dauerinstallation) ist ein Standsicherheitsnachweis durch einen zugelassenen Ingenieur nach DIN\u202fEN\u202f1991-1-4 erforderlich.',
   },
   en: {
     appTitle: 'Amateur Radio Tower Designer',
@@ -134,5 +135,6 @@ export const translations = {
     unit_knm: 'kNm',
     windLoadResultsTitle: 'Wind Load Results',
     windLoadDiagramTitle: 'Wind Load Diagram',
+    windLoadDisclaimer: 'This calculation is a technical estimate for planning purposes only, without warranty or liability. For a permitted structural design (e.g. installation on buildings or as a permanent structure), a structural safety assessment by a licensed engineer in accordance with EN\u202f1991-1-4 is required.',
   },
 }

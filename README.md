@@ -82,6 +82,10 @@ npm run test   # Vitest unit tests
 
 The UI supports German and English. Toggle in the top-right corner; preference is saved in `localStorage`.
 
+## Disclaimer
+
+The calculations in this tool are technical estimates for planning purposes only, without warranty or liability. For a permitted structural design (e.g. installation on buildings or as a permanent structure), a structural safety assessment by a licensed engineer in accordance with EN 1991-1-4 is required.
+
 ## Planned
 
 - Force and load calculations for guy wires

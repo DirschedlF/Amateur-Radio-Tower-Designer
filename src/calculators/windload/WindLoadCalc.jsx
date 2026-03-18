@@ -3,6 +3,7 @@ import WindLoadInputs from './WindLoadInputs.jsx'
 import WindLoadDiagram from './WindLoadDiagram.jsx'
 import WindLoadResults from './WindLoadResults.jsx'
 import { calculateWindLoad } from './windload.js'
+import { useLanguage } from '../../hooks/useLanguage.jsx'
 
 const DEFAULT_CONFIG = {
   windSpeed: 28,
@@ -13,6 +14,7 @@ const DEFAULT_CONFIG = {
 
 export default function WindLoadCalc() {
   const [config, setConfig] = useState(DEFAULT_CONFIG)
+  const { t } = useLanguage()
 
   const results = useMemo(() => {
     try {
@@ -40,6 +42,10 @@ export default function WindLoadCalc() {
         <WindLoadDiagram config={config} results={results} />
         <WindLoadResults results={results} />
       </div>
+
+      <p className="text-xs text-slate-500 border border-slate-700 rounded-lg px-4 py-3 leading-relaxed">
+        ⚠️ {t('windLoadDisclaimer')}
+      </p>
     </div>
   )
 }

@@ -60,6 +60,12 @@ SVG side-view diagram with force arrows at centroid heights included.
 
 ---
 
+## Berechnungsmethoden
+
+Eine ausführliche Beschreibung der verwendeten Berechnungsverfahren, Formeln und Annahmen findet sich in [docs/Berechnungsmethoden.md](docs/Berechnungsmethoden.md).
+
+---
+
 ## Getting Started
 
 ```bash

@@ -1,34 +1,46 @@
 # Amateur Radio Tower Designer
 
-A browser-based calculator suite for amateur radio antenna installations.
-Built with React + Vite + Tailwind CSS, available as a standard SPA or as a single offline HTML file.
+Wer einen Amateurfunk-Mast plant, jongliert mit Masthöhe, Abspanngeometrie und Windlast — und verliert dabei schnell den Überblick. Der **Amateur Radio Tower Designer** bringt das alles an einen Ort.
 
-**Version:** 0.2.0
+Das Tool berechnet zunächst die **Abspanngeometrie**: Drahtlängen, Winkel und Gesamtmaterial für bis zu drei Abspannebenen — sofort, während man die Werte eingibt. Parallel dazu ermittelt der **Windlast-Rechner** den dynamischen Winddruck auf Mast und Antenne nach EN 1991-1-4.
+
+Der entscheidende Schritt: Beide Rechner sind verknüpft. Aus der Windlast und der Abspanngeometrie berechnet das Tool direkt die **Drahtspannung je Ebene** — in Newton und Kilogramm-Kraft, aufgeschlüsselt nach der Abschnittsmethode. So sieht man auf einen Blick, welche Abspannebene am stärksten belastet wird und ob die geplanten Drähte dafür ausgelegt sein müssen.
+
+Das Ergebnis ist kein Statikgutachten, sondern eine fundierte **Planungsgrundlage**: schnell, nachvollziehbar, kostenlos — direkt im Browser, ohne Installation.
+
+**Version:** 0.3.0 · [Live](https://dirschedlf.github.io/Amateur-Radio-Tower-Designer/)
 
 ---
 
 ## Calculators
 
 ### Guy Wire Calculator
-Calculates geometry for guyed masts with 1, 2, or 3 wire levels.
 
-**Inputs per level:**
+Calculates geometry and wind load tensions for guyed masts with 1, 2, or 3 wire levels.
+
+**Geometry inputs per level:**
+
 - Attachment height on mast (m)
 - Anchor radius from mast base (m)
 - Number of wires (3 or 4)
 
-**Outputs:**
+**Geometry outputs:**
+
 - Wire length per wire
-- Angle from horizontal
-- Angle from mast
-- Total wire length per level
-- Grand total across all levels
+- Angle from horizontal / angle from mast
+- Total wire length per level and grand total
+
+**Load analysis** (requires Wind Load Calculator to be filled in):
+
+- Section wind force per level (sectional method / Abschnittsmethode)
+- Horizontal force per wire
+- Wire tension in N and kgf
 
 Side-view SVG diagram with color-coded wire levels included.
 
 ### Wind Load Calculator
 
-Calculates wind forces and bending moments for telescoping conical masts (Schiebemast) with mounted antennas. Uses simplified formula without specific norm.
+Calculates wind forces and bending moments for telescoping conical masts with mounted antennas, following EN 1991-1-4.
 
 **Inputs:**
 
@@ -85,8 +97,3 @@ The UI supports German and English. Toggle in the top-right corner; preference i
 ## Disclaimer
 
 The calculations in this tool are technical estimates for planning purposes only, without warranty or liability. For a permitted structural design (e.g. installation on buildings or as a permanent structure), a structural safety assessment by a licensed engineer in accordance with EN 1991-1-4 is required.
-
-## Planned
-
-- Force and load calculations for guy wires
-- Grounding calculator

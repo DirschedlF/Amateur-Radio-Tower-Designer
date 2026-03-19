@@ -4,6 +4,7 @@ import GuyWireDiagram from './GuyWireDiagram.jsx'
 import GuyWireResults from './GuyWireResults.jsx'
 import GuyWireLoad from './GuyWireLoad.jsx'
 import { calculateGuyWires } from './guywire.js'
+import { calculateGuyWireLoad } from './guywireload.js'
 
 const DEFAULT_CONFIG = {
   mastHeight: 12,
@@ -15,7 +16,7 @@ const DEFAULT_CONFIG = {
   ],
 }
 
-export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindLoad = () => {}, mastHeight = null, onMastHeightChange = () => {} }) {
+export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindLoad = () => {}, mastHeight = null, onMastHeightChange = () => {}, onGuyWireChange = () => {} }) {
   const [config, setConfig] = useState(DEFAULT_CONFIG)
 
   useEffect(() => {
@@ -36,6 +37,32 @@ export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindL
     }
   }, [config])
 
+  const loadRaw = useMemo(() => {
+    if (!windLoadSnapshot || !results) return null
+    try {
+      return calculateGuyWireLoad({ snapshot: windLoadSnapshot, levelResults: results.levels })
+    } catch {
+      return null
+    }
+  }, [windLoadSnapshot, results])
+
+  const loadResult = loadRaw
+    ? { levels: loadRaw.levels, q: windLoadSnapshot.q, windSpeed: windLoadSnapshot.windSpeed }
+    : null
+
+  useEffect(() => {
+    if (results === null) {
+      onGuyWireChange(null)
+      return
+    }
+    onGuyWireChange({
+      mastHeight: config.mastHeight,
+      levels: results.levels,
+      grandTotalLength: results.grandTotalLength,
+      loadResults: loadRaw?.levels ?? null,
+    })
+  }, [results, loadRaw]) // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <div className="flex flex-col gap-4">
       <GuyWireInputs config={config} onChange={handleConfigChange} />
@@ -46,8 +73,7 @@ export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindL
       </div>
 
       <GuyWireLoad
-        windLoadSnapshot={windLoadSnapshot}
-        geoResults={results}
+        loadResult={loadResult}
         onNavigateToWindLoad={onNavigateToWindLoad}
       />
     </div>

@@ -36,7 +36,7 @@ export default function App() {
           </button>
           <span className="text-amber-400 text-xl">📡</span>
           <span className="font-semibold text-slate-100">{t('appTitle')}</span>
-          <span className="text-xs text-slate-500 font-mono">v0.3.0</span>
+          <span className="text-xs text-slate-500 font-mono">v0.4.0</span>
         </div>
         <div className="flex items-center gap-2">
           <ReportButton

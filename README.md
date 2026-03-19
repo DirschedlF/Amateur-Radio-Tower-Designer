@@ -102,3 +102,7 @@ The UI supports German and English. Toggle in the top-right corner; preference i
 ## Disclaimer
 
 The calculations in this tool are technical estimates for planning purposes only, without warranty or liability. For a permitted structural design (e.g. installation on buildings or as a permanent structure), a structural safety assessment by a licensed engineer in accordance with EN 1991-1-4 is required.
+
+---
+
+Developed by Fritz Dirschedl (DK9RC) · ![version](https://img.shields.io/badge/version-0.3.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![React](https://img.shields.io/badge/React-18.2-61DAFB?logo=react&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38BDF8?logo=tailwindcss&logoColor=white)

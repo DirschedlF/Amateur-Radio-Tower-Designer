@@ -2,6 +2,8 @@
   "name": "amateur-radio-tower-designer",
   "private": true,
   "version": "0.3.0",
+  "license": "MIT",
+  "author": "Fritz Dirschedl (DK9RC)",
   "type": "module",
   "scripts": {
     "dev": "vite",

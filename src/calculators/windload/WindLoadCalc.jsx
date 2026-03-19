@@ -56,6 +56,13 @@ export default function WindLoadCalc({ onWindLoadChange = () => {}, mastHeight =
         mastCw: config.mast.cw,
         antennaForce: results.antenna.force,
         antennaMountHeight: config.antenna.mountHeight,
+        // New fields for report
+        antennaArea: config.antenna.area,
+        antennaCw: config.antenna.cw,
+        mastForce: results.mast.force,
+        mastMoment: results.mast.moment,
+        totalForce: results.total.force,
+        totalMoment: results.total.moment,
       }
       return { results, snapshot }
     } catch {

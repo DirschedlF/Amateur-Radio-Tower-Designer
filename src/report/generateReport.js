@@ -46,10 +46,10 @@ export function generateReport({ windSnapshot, guyWireSnapshot, lang }) {
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.height)}</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.radius)}</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${Number(lvl.wires)}</td>
-      <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.wireLength)}</td>
+      <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.wireLength)} m</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.angleFromHorizontal)}°</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.angleFromMast)}°</td>
-      <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.totalLengthPerLevel)}</td>
+      <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.totalLengthPerLevel)} m</td>
     </tr>
   `).join('')
 

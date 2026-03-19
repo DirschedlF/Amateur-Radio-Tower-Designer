@@ -60,9 +60,10 @@ SVG side-view diagram with force arrows at centroid heights included.
 
 ---
 
-## Berechnungsmethoden
+## Dokumentation
 
-Eine ausführliche Beschreibung der verwendeten Berechnungsverfahren, Formeln und Annahmen findet sich in [docs/Berechnungsmethoden.md](docs/Berechnungsmethoden.md).
+- [Benutzerhandbuch (DE)](docs/Benutzerhandbuch.md) — Schritt-für-Schritt-Anleitung für Einsteiger, inkl. Erklärungen zu Windwerten, Böenfaktor und cw-Wert
+- [Berechnungsmethoden (DE)](docs/Berechnungsmethoden.md) — Formeln, Annahmen und physikalisches Modell beider Rechner
 
 ---
 

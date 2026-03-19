@@ -3,10 +3,12 @@ import { useLanguage } from './hooks/useLanguage.jsx'
 import Sidebar from './components/Sidebar.jsx'
 import GuyWireCalc from './calculators/guywire/GuyWireCalc.jsx'
 import WindLoadCalc from './calculators/windload/WindLoadCalc.jsx'
+import ReportButton from './components/ReportButton.jsx'
 
 export default function App() {
   const [activeCalc, setActiveCalc] = useState('guywire')
   const [windLoadSnapshot, setWindLoadSnapshot] = useState(null)
+  const [guyWireSnapshot, setGuyWireSnapshot] = useState(null)
   const [sharedMastHeight, setSharedMastHeight] = useState(12)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { t, toggleLang } = useLanguage()
@@ -36,12 +38,19 @@ export default function App() {
           <span className="font-semibold text-slate-100">{t('appTitle')}</span>
           <span className="text-xs text-slate-500 font-mono">v0.3.0</span>
         </div>
-        <button
-          onClick={toggleLang}
-          className="bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm px-3 py-1 rounded-full transition-colors"
-        >
-          {t('langToggle')}
-        </button>
+        <div className="flex items-center gap-2">
+          <ReportButton
+            windSnapshot={windLoadSnapshot}
+            guyWireSnapshot={guyWireSnapshot}
+            onCloseDrawer={() => setDrawerOpen(false)}
+          />
+          <button
+            onClick={toggleLang}
+            className="bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm px-3 py-1 rounded-full transition-colors"
+          >
+            {t('langToggle')}
+          </button>
+        </div>
       </header>
 
       {/* Body */}
@@ -65,6 +74,7 @@ export default function App() {
               onNavigateToWindLoad={() => setActiveCalc('windload')}
               mastHeight={sharedMastHeight}
               onMastHeightChange={setSharedMastHeight}
+              onGuyWireChange={setGuyWireSnapshot}
             />
           </div>
           <div className={activeCalc === 'windload' ? '' : 'hidden'}>

@@ -72,10 +72,10 @@ Ein "Bericht"-Button erzeugt ein kompaktes 1-Seiten-Dokument mit allen Eingaben 
 
 - `GuyWireCalc` importiert zusätzlich `calculateGuyWireLoad`
 - Zweites `useMemo` in `GuyWireCalc` berechnet `loadResult = calculateGuyWireLoad({ snapshot: windLoadSnapshot, levelResults: results?.levels })` — ergibt `null` wenn `windLoadSnapshot` fehlt oder `results` fehlt
-- `GuyWireLoad.jsx` bekommt `loadResult` als Prop; die bisherigen Props `windLoadSnapshot` und `geoResults` entfallen. Neues Prop-Interface: `{ loadResult, onNavigateToWindLoad }`
+- `GuyWireLoad.jsx` bekommt `loadResult` als Prop; die bisherigen Props `windLoadSnapshot` und `geoResults` entfallen. `GuyWireCalc` reichert das Ergebnis mit Metadaten an: `loadResult = loadRaw ? { levels: loadRaw.levels, q: windLoadSnapshot.q, windSpeed: windLoadSnapshot.windSpeed } : null`. Neues Prop-Interface: `{ loadResult, onNavigateToWindLoad }`. `GuyWireLoad` liest `loadResult.q` und `loadResult.windSpeed` für die Zusammenfassungszeile.
 - `GuyWireCalc` bekommt prop `onGuyWireChange`
 - Emittiert `guyWireSnapshot` via `useEffect([results, loadResult])`: wenn die Geometrie-Ergebnisse (`results`) nicht null sind, wird ein Snapshot emittiert — mit `loadResults: loadResult?.levels ?? null` (kann null sein wenn windLoadSnapshot fehlt); wenn `results === null`, wird `onGuyWireChange(null)` aufgerufen (kein veralteter Snapshot in `App.jsx`)
-- `App.jsx` hält `guyWireSnapshot` im State (Initialwert `null`)
+- `App.jsx` hält `guyWireSnapshot` im State (Initialwert `null`) und übergibt `onGuyWireChange={setGuyWireSnapshot}` an `GuyWireCalc`
 
 ### Exakte Datenstrukturen (aus Quellcode)
 
@@ -211,7 +211,7 @@ Button + Popover (kein echtes Modal, kein Focus-Trap).
 
 ### Platzierung im Header
 
-`ReportButton` wird in `App.jsx` im Header-Bereich rechts platziert, neben dem Sprach-Toggle-Button. Auf Mobile ebenfalls sichtbar (gleiche Komponente).
+`ReportButton` wird direkt in `App.jsx` im Header-Bereich rechts gerendert, neben dem Sprach-Toggle-Button. Props von `App.jsx`: `windSnapshot={windLoadSnapshot}`, `guyWireSnapshot={guyWireSnapshot}`, `onCloseDrawer={() => setDrawerOpen(false)}`, `lang={lang}`. Auf Mobile ebenfalls sichtbar (gleiche Komponente, gleiche Props). Die bestehenden `windSnapshot`-Felder bleiben vollständig erhalten; `WindLoadCalc.jsx` fügt nur neue Felder hinzu.
 
 ### i18n
 

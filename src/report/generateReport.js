@@ -45,7 +45,7 @@ export function generateReport({ windSnapshot, guyWireSnapshot, lang }) {
       <td style="padding:3px 6px;border:1px solid #e2e8f0;">${i + 1}</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.height)}</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.radius)}</td>
-      <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${lvl.wires}</td>
+      <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${Number(lvl.wires)}</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.wireLength)}</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.angleFromHorizontal)}°</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.angleFromMast)}°</td>

@@ -8,6 +8,7 @@ export default function ReportButton({ windSnapshot, guyWireSnapshot, onCloseDra
   const [open, setOpen] = useState(false)
   const [pos, setPos] = useState({ top: 0, right: 0 })
   const btnRef = useRef(null)
+  const popoverRef = useRef(null)
 
   const disabled = !windSnapshot || !guyWireSnapshot
 
@@ -23,7 +24,10 @@ export default function ReportButton({ windSnapshot, guyWireSnapshot, onCloseDra
     if (!open) return
     function onKey(e) { if (e.key === 'Escape') setOpen(false) }
     function onMouse(e) {
-      if (btnRef.current && !btnRef.current.contains(e.target)) setOpen(false)
+      if (btnRef.current && !btnRef.current.contains(e.target) &&
+          popoverRef.current && !popoverRef.current.contains(e.target)) {
+        setOpen(false)
+      }
     }
     document.addEventListener('keydown', onKey)
     document.addEventListener('mousedown', onMouse)
@@ -73,6 +77,7 @@ export default function ReportButton({ windSnapshot, guyWireSnapshot, onCloseDra
 
       {open && createPortal(
         <div
+          ref={popoverRef}
           style={{
             position: 'fixed',
             top: pos.top,

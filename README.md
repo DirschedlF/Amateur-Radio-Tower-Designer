@@ -1,12 +1,5 @@
 # Amateur Radio Tower Designer
 
-## Dokumentation
-
-- [Benutzerhandbuch (DE)](docs/Benutzerhandbuch.md) — Schritt-für-Schritt-Anleitung für Einsteiger, inkl. Erklärungen zu Windwerten, Böenfaktor und cw-Wert
-- [Berechnungsmethoden (DE)](docs/Berechnungsmethoden.md) — Formeln, Annahmen und physikalisches Modell beider Rechner
-
----
-
 Wer einen Amateurfunk-Mast plant, jongliert mit Masthöhe, Abspanngeometrie und Windlast — und verliert dabei schnell den Überblick. Der **Amateur Radio Tower Designer** bringt das alles an einen Ort.
 
 Das Tool berechnet zunächst die **Abspanngeometrie**: Drahtlängen, Winkel und Gesamtmaterial für bis zu drei Abspannebenen — sofort, während man die Werte eingibt. Parallel dazu ermittelt der **Windlast-Rechner** den dynamischen Winddruck auf Mast und Antenne nach EN 1991-1-4.
@@ -16,6 +9,11 @@ Der entscheidende Schritt: Beide Rechner sind verknüpft. Aus der Windlast und d
 Das Ergebnis ist kein Statikgutachten, sondern eine fundierte **Planungsgrundlage**: schnell, nachvollziehbar, kostenlos — direkt im Browser, ohne Installation.
 
 **Version:** 0.3.0 · [Live](https://dirschedlf.github.io/Amateur-Radio-Tower-Designer/)
+
+## Dokumentation
+
+- [Benutzerhandbuch (DE)](docs/Benutzerhandbuch.md) — Schritt-für-Schritt-Anleitung für Einsteiger, inkl. Erklärungen zu Windwerten, Böenfaktor und cw-Wert
+- [Berechnungsmethoden (DE)](docs/Berechnungsmethoden.md) — Formeln, Annahmen und physikalisches Modell beider Rechner
 
 ---
 

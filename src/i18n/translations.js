@@ -76,6 +76,15 @@ export const translations = {
     colHorizPerWire: 'Horiz. je Draht',
     colTension: 'Drahtspannung',
     loadDisclaimer: 'Planungsschätzung — keine statische Auslegung. Vorspannkraft nicht berücksichtigt.',
+
+    // Report export
+    reportButton: 'Bericht',
+    reportPrint: 'Drucken',
+    reportDownload: 'Herunterladen',
+    reportTitle: 'Mast-Designer Bericht',
+    reportDisclaimer: 'Planungsabschätzung — kein Ersatz für einen statischen Nachweis',
+    reportBothRequired: 'Beide Rechner müssen ausgefüllt sein',
+    reportPopupBlocked: 'Popup blockiert — bitte Popups für diese Seite erlauben',
   },
   en: {
     appTitle: 'Amateur Radio Tower Designer',
@@ -154,5 +163,14 @@ export const translations = {
     colHorizPerWire: 'Horiz. per Wire',
     colTension: 'Wire Tension',
     loadDisclaimer: 'Planning estimate only — not a structural analysis. Pre-tension not considered.',
+
+    // Report export
+    reportButton: 'Report',
+    reportPrint: 'Print',
+    reportDownload: 'Download',
+    reportTitle: 'Mast Designer Report',
+    reportDisclaimer: 'Planning estimate — not a substitute for structural verification',
+    reportBothRequired: 'Both calculators must be filled in',
+    reportPopupBlocked: 'Popup blocked — please allow popups for this site',
   },
 }

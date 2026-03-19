@@ -72,7 +72,7 @@ Ein "Bericht"-Button erzeugt ein kompaktes 1-Seiten-Dokument mit allen Eingaben 
 
 - `GuyWireCalc` importiert zusätzlich `calculateGuyWireLoad`
 - Zweites `useMemo` in `GuyWireCalc` berechnet `loadResult = calculateGuyWireLoad({ snapshot: windLoadSnapshot, levelResults: results?.levels })` — ergibt `null` wenn `windLoadSnapshot` fehlt oder `results` fehlt
-- `GuyWireLoad.jsx` bekommt `loadResult` als Prop; die bisherigen Props `windLoadSnapshot` und `geoResults` entfallen. `GuyWireCalc` reichert das Ergebnis mit Metadaten an: `loadResult = loadRaw ? { levels: loadRaw.levels, q: windLoadSnapshot.q, windSpeed: windLoadSnapshot.windSpeed } : null`. Neues Prop-Interface: `{ loadResult, onNavigateToWindLoad }`. `GuyWireLoad` liest `loadResult.q` und `loadResult.windSpeed` für die Zusammenfassungszeile.
+- `GuyWireLoad.jsx` bekommt `loadResult` als Prop; die bisherigen Props `windLoadSnapshot` und `geoResults` entfallen. `GuyWireCalc` reichert das Ergebnis mit Metadaten an: `loadResult = loadRaw ? { levels: loadRaw.levels, q: windLoadSnapshot.q, windSpeed: windLoadSnapshot.windSpeed } : null`. Neues Prop-Interface: `{ loadResult, onNavigateToWindLoad }`. `GuyWireLoad` liest `loadResult.q` und `loadResult.windSpeed` für die Zusammenfassungszeile. Der Leer-Zustand (`loadResult === null`) zeigt immer den `onNavigateToWindLoad`-Button — unabhängig davon, ob der Grund fehlende Geometrie oder fehlende Windlast ist. Dieses vereinfachte Verhalten ist akzeptabel (Geometrie-Fehler treten in der Praxis nicht auf).
 - `GuyWireCalc` bekommt prop `onGuyWireChange`
 - Emittiert `guyWireSnapshot` via `useEffect([results, loadRaw])`: wenn `results !== null`, wird stets ein Snapshot emittiert — auch wenn `loadRaw === null` (windLoadSnapshot fehlt), mit `loadResults: null`; wenn `results === null`, wird `onGuyWireChange(null)` aufgerufen (kein veralteter Snapshot in `App.jsx`)
 - `App.jsx` hält `guyWireSnapshot` im State (Initialwert `null`) und übergibt `onGuyWireChange={setGuyWireSnapshot}` an `GuyWireCalc`
@@ -176,7 +176,7 @@ Button + Popover (kein echtes Modal, kein Focus-Trap).
 
 **Disabled-Zustand:** `windSnapshot === null || guyWireSnapshot === null`. Der Button zeigt einen HTML `title`-Tooltip mit `reportBothRequired`-Text.
 
-**Aktiver Zustand:** Klick ruft zuerst `onCloseDrawer()` auf, dann öffnet das Popover. Das Popover wird als React Portal in `document.body` gerendert (via `createPortal`), `position: fixed` (verhindert Clipping durch `overflow: hidden`-Ancestors in `App.jsx`), positioniert via `getBoundingClientRect()` des Buttons: unterhalb des Buttons, rechtsbündig zur rechten Button-Kante. Maximale Breite `min(220px, 90vw)`, kein Viewport-Overflow. `z-50`. Damit wird Layout-Shift durch den Drawer-Close vermieden. Inhalt:
+**Aktiver Zustand:** Klick ruft zuerst `onCloseDrawer()` auf, dann öffnet das Popover. Das Popover wird als React Portal in `document.body` gerendert (via `createPortal`), `position: fixed` (verhindert Clipping durch `overflow: hidden`-Ancestors). Button-Ref via `useRef`. Position wird synchron im Click-Handler via `ref.current.getBoundingClientRect()` bestimmt und in State gespeichert. Unterhalb des Buttons, rechtsbündig zur rechten Button-Kante. Maximale Breite `min(220px, 90vw)`, kein Viewport-Overflow. `z-50`. Bei Fenster-Resize wird nicht neu positioniert (Popover-Lebensdauer ist kurz). Damit wird Layout-Shift durch den Drawer-Close vermieden. Inhalt:
 
 - Zwei Buttons: `reportPrint` und `reportDownload`
 - Kein weiterer Text oder Vorschau

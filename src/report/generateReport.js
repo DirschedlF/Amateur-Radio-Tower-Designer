@@ -19,20 +19,20 @@ export function generateReport({ windSnapshot, guyWireSnapshot, lang }) {
           <thead>
             <tr style="background:#f1f5f9;">
               <th style="text-align:left;padding:4px 8px;border:1px solid #e2e8f0;">${t('colLevel')}</th>
-              <th style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${t('colSectionForce')} (N)</th>
-              <th style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${t('colHorizPerWire')} (N)</th>
-              <th style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${t('colTension')} (N)</th>
-              <th style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${t('colTension')} (kgf)</th>
+              <th style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${t('colSectionForce')}</th>
+              <th style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${t('colHorizPerWire')}</th>
+              <th style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${t('colTension')}</th>
+              <th style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${t('colTension')}</th>
             </tr>
           </thead>
           <tbody>
             ${guyWireSnapshot.loadResults.map((lvl, i) => `
               <tr>
                 <td style="padding:4px 8px;border:1px solid #e2e8f0;">${i + 1}</td>
-                <td style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${fmt(lvl.sectionForce, 0)}</td>
-                <td style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${fmt(lvl.horizForcePerWire, 0)}</td>
-                <td style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${fmt(lvl.tension, 0)}</td>
-                <td style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${fmt(lvl.tensionKgf, 1)}</td>
+                <td style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${fmt(lvl.sectionForce, 0)} N</td>
+                <td style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${fmt(lvl.horizForcePerWire, 0)} N</td>
+                <td style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${fmt(lvl.tension, 0)} N</td>
+                <td style="text-align:right;padding:4px 8px;border:1px solid #e2e8f0;">${fmt(lvl.tensionKgf, 1)} kgf</td>
               </tr>
             `).join('')}
           </tbody>

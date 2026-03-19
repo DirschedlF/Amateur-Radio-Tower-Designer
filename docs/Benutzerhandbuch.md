@@ -161,6 +161,29 @@ Die angegebene Drahtspannung ist die reine Windlastkomponente. Hinzu kommt die *
 
 ---
 
+## Schritt 4: Bericht exportieren
+
+Sobald beide Rechner ausgefüllt sind, ist der **Bericht**-Button oben rechts im Header aktiv. Ein Klick öffnet ein Menü mit zwei Optionen:
+
+| Option            | Ergebnis                                                                                                                                              |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Drucken**       | Öffnet den Bericht in einem neuen Fenster und startet den Browser-Druckdialog. Über „Als PDF speichern" lässt sich ein PDF erzeugen.                  |
+| **Herunterladen** | Speichert den Bericht als standalone HTML-Datei (z. B. `mast-bericht-2026-03-19.html`). Die Datei ist offline nutzbar und in jedem Browser öffenbar. |
+
+Der Bericht enthält alle Eingaben und Ergebnisse beider Rechner auf einer Seite — Windlast links, Abspanngeometrie rechts, Belastungsberechnung darunter — und trägt einen Haftungsausschluss-Hinweis als Fußzeile.
+
+> **Hinweis:** Der Button ist ausgegraut, solange einer der beiden Rechner noch nicht vollständig ausgefüllt ist. Ein Tooltip zeigt den Grund an.
+
+---
+
+## Mobile Nutzung
+
+Auf Smartphones und Tablets (Bildschirmbreite unter 768 px) ist die Seitenleiste standardmäßig ausgeblendet. Über das **☰-Symbol** oben links im Header lässt sie sich als Drawer einblenden. Ein Tippen auf einen Navigations-Eintrag, auf den abgedunkelten Hintergrund oder die Escape-Taste schließt den Drawer wieder.
+
+Auf dem Desktop (≥ 768 px) ist die Seitenleiste wie gewohnt dauerhaft sichtbar.
+
+---
+
 ## Hinweise und Grenzen des Tools
 
 - Alle Berechnungen sind **Planungsabschätzungen** — kein Ersatz für einen statischen Nachweis.

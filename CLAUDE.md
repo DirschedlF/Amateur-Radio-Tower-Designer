@@ -24,8 +24,10 @@ React 18 + Vite 7 + Tailwind CSS 3 (dark theme). ESLint 9 flat config (`eslint.c
 
 **Shared state in `App.jsx`:**
 
-- `windLoadSnapshot` (null | object) — emitted by `WindLoadCalc` via `onWindLoadChange` prop, passed to `GuyWireCalc` → `GuyWireLoad`
+- `windLoadSnapshot` (null | object) — emitted by `WindLoadCalc` via `onWindLoadChange` prop, passed to `GuyWireCalc`
+- `guyWireSnapshot` (null | object) — emitted by `GuyWireCalc` via `onGuyWireChange` prop; used by `ReportButton`
 - `sharedMastHeight` (number) — synced bidirectionally between both calculators via `mastHeight` prop + `onMastHeightChange` callback
+- `drawerOpen` (boolean) — controls mobile sidebar drawer; toggled by hamburger button and overlay click
 
 **Mast height sync pattern:** Each calculator accepts `mastHeight` + `onMastHeightChange`. A `useEffect([mastHeight])` updates internal config when the prop changes (functional update, early-return if already equal). `handleConfigChange` calls `onMastHeightChange` when the local value differs. No feedback loops.
 
@@ -42,17 +44,30 @@ React 18 + Vite 7 + Tailwind CSS 3 (dark theme). ESLint 9 flat config (`eslint.c
 - Inputs: mast height, 1/2/3 levels, per-level height + anchor radius + wire count (3 or 4)
 - Outputs: wire length, angle from horizontal, angle from mast, total per level, grand total + load section
 - `guywire.js` level objects include `height` and `radius` (needed by load calc)
-- `GuyWireLoad.jsx` child: empty state (no snapshot) or results table (section force, horiz/wire, tension N + kgf)
+- `GuyWireCalc.jsx` calls `calculateGuyWireLoad` internally via second `useMemo` → derives `loadResult = { levels, q, windSpeed } | null` → passes to `GuyWireLoad`; emits `guyWireSnapshot` via `useEffect([results, loadRaw])` + `onGuyWireChange` prop
+- `GuyWireLoad.jsx` child: props `{ loadResult, onNavigateToWindLoad }` — empty state when `loadResult === null`, results table otherwise (section force, horiz/wire, tension N + kgf)
 - `guywireload.js`: `calculateGuyWireLoad({ snapshot, levelResults })` — sectional method, midpoint-rule boundaries, antenna force always to top level
+- `guyWireSnapshot` shape: `{ mastHeight, levels, grandTotalLength, loadResults: array | null }`
 - Layout: no `max-w-*` on outer wrapper — table needs full width (`whitespace-nowrap` on `<th>` and wire-length `<td>`)
 
 **Wind Load Calculator** (`src/calculators/windload/`):
 
 - Physics: `q = 0.5 × 1.25 × v² × gustFactor` (default 1.7). Mast area = trapezoid (conical mast).
 - Emits snapshot via `useEffect([memoised])` → `onWindLoadChange` prop
-- Snapshot: `{ q, windSpeed, mastHeight, diamBottomMm, diamTopMm, mastCw, antennaForce, antennaMountHeight }`
+- Snapshot: `{ q, windSpeed, mastHeight, diamBottomMm, diamTopMm, mastCw, antennaForce, antennaMountHeight, antennaArea, antennaCw, mastForce, mastMoment, totalForce, totalMoment }`
 - `windSpeed` is canonical; q field uses `defaultValue + key={derivedQ} + onBlur` to avoid cursor-jumping
 - `handleConfigChange` clamps `antenna.mountHeight` to `mast.height` (`Math.min`) — same clamp in the mastHeight sync `useEffect`
+
+**Mobile Navigation:**
+
+- `Sidebar.jsx` accepts `isOpen` + `onClose` props; uses `fixed` positioning + CSS `translate-x` for drawer behavior on mobile; `md:static` restores normal flow on desktop
+- `App.jsx` adds hamburger button (`md:hidden`), overlay backdrop, Escape-key handler — all gated on `drawerOpen` state
+
+**Report Export (`src/report/`, `src/components/ReportButton.jsx`):**
+
+- `generateReport({ windSnapshot, guyWireSnapshot, lang })` — pure function, returns full HTML string; imports translations directly (`translations[lang][key]`); no React
+- `ReportButton.jsx` — button + portal popover (`createPortal` into `document.body`, `position: fixed`); disabled when either snapshot is null; calls `onCloseDrawer()` before opening popover; print via `window.open` + `setTimeout(() => w.print(), 250)`; download via `Blob` + `URL.createObjectURL`
+- `ReportButton` is enabled only when both `windLoadSnapshot !== null` AND `guyWireSnapshot !== null`
 
 ## Known Debt
 

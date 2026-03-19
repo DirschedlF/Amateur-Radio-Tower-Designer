@@ -8,7 +8,9 @@ Der entscheidende Schritt: Beide Rechner sind verknüpft. Aus der Windlast und d
 
 Das Ergebnis ist kein Statikgutachten, sondern eine fundierte **Planungsgrundlage**: schnell, nachvollziehbar, kostenlos — direkt im Browser, ohne Installation.
 
-**Version:** 0.3.0 · [Live](https://dirschedlf.github.io/Amateur-Radio-Tower-Designer/)
+Alle Eingaben und Ergebnisse lassen sich als kompakter **1-Seiten-Bericht** exportieren — druckbar (→ PDF via Browser) oder als standalone HTML-Datei. Das Interface ist vollständig **mobilgeräte-tauglich**: auf kleinen Screens ersetzt ein Hamburger-Menü die feste Seitenleiste.
+
+**Version:** 0.4.0 · [Live](https://dirschedlf.github.io/Amateur-Radio-Tower-Designer/)
 
 ## Dokumentation
 
@@ -105,4 +107,4 @@ The calculations in this tool are technical estimates for planning purposes only
 
 ---
 
-Developed by Fritz Dirschedl (DK9RC) · ![version](https://img.shields.io/badge/version-0.3.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![React](https://img.shields.io/badge/React-18.2-61DAFB?logo=react&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38BDF8?logo=tailwindcss&logoColor=white)
+Developed by Fritz Dirschedl (DK9RC) · ![version](https://img.shields.io/badge/version-0.4.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![React](https://img.shields.io/badge/React-18.2-61DAFB?logo=react&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38BDF8?logo=tailwindcss&logoColor=white)

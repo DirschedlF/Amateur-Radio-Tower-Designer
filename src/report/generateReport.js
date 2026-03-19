@@ -43,8 +43,8 @@ export function generateReport({ windSnapshot, guyWireSnapshot, lang }) {
   const levelsHtml = guyWireSnapshot.levels.map((lvl, i) => `
     <tr>
       <td style="padding:3px 6px;border:1px solid #e2e8f0;">${i + 1}</td>
-      <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.height)}</td>
-      <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.radius)}</td>
+      <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.height)} m</td>
+      <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.radius)} m</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${Number(lvl.wires)}</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.wireLength)} m</td>
       <td style="text-align:right;padding:3px 6px;border:1px solid #e2e8f0;">${fmt(lvl.angleFromHorizontal)}°</td>
@@ -111,8 +111,8 @@ export function generateReport({ windSnapshot, guyWireSnapshot, lang }) {
       <thead>
         <tr>
           <th>${t('colLevel')}</th>
-          <th class="r">${t('heightLabel') ?? 'h (m)'}</th>
-          <th class="r">${t('radiusLabel') ?? 'r (m)'}</th>
+          <th class="r">${t('heightLabel').replace(/\s*\(m\)/i, '')}</th>
+          <th class="r">${t('radiusLabel').replace(/\s*\(m\)/i, '')}</th>
           <th class="r">${t('wiresLabel') ?? 'n'}</th>
           <th class="r">${t('colWireLength')}</th>
           <th class="r">${t('colAngleH')}</th>

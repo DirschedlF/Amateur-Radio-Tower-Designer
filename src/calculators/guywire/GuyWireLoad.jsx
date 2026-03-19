@@ -1,6 +1,4 @@
-import { useMemo } from 'react'
 import { useLanguage } from '../../hooks/useLanguage.jsx'
-import { calculateGuyWireLoad } from './guywireload.js'
 
 const LEVEL_COLORS = ['text-emerald-400', 'text-amber-400', 'text-red-400', 'text-purple-400']
 
@@ -8,20 +6,8 @@ function fmt(n, decimals = 0) {
   return n.toFixed(decimals)
 }
 
-export default function GuyWireLoad({ windLoadSnapshot, geoResults, onNavigateToWindLoad }) {
+export default function GuyWireLoad({ loadResult, onNavigateToWindLoad }) {
   const { t } = useLanguage()
-
-  const loadResults = useMemo(() => {
-    if (!windLoadSnapshot || !geoResults) return null
-    try {
-      return calculateGuyWireLoad({
-        snapshot: windLoadSnapshot,
-        levelResults: geoResults.levels,
-      })
-    } catch {
-      return null
-    }
-  }, [windLoadSnapshot, geoResults])
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
@@ -29,7 +15,7 @@ export default function GuyWireLoad({ windLoadSnapshot, geoResults, onNavigateTo
         {t('loadSectionTitle')}
       </p>
 
-      {!loadResults ? (
+      {!loadResult ? (
         <div className="flex items-center gap-3 border border-dashed border-slate-600 rounded-lg px-4 py-3">
           <span className="text-slate-500 text-lg">⚡</span>
           <p className="text-sm text-slate-400 flex-1">{t('loadRequiredHint')}</p>
@@ -44,7 +30,7 @@ export default function GuyWireLoad({ windLoadSnapshot, geoResults, onNavigateTo
         <>
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs text-slate-500">
-              q = {fmt(windLoadSnapshot.q, 0)} N/m² · v = {fmt(windLoadSnapshot.windSpeed, 0)} m/s
+              q = {fmt(loadResult.q, 0)} N/m² · v = {fmt(loadResult.windSpeed, 0)} m/s
             </span>
           </div>
 
@@ -66,7 +52,7 @@ export default function GuyWireLoad({ windLoadSnapshot, geoResults, onNavigateTo
               </tr>
             </thead>
             <tbody>
-              {loadResults.levels.map((level, i) => (
+              {loadResult.levels.map((level, i) => (
                 <tr key={i} className={i % 2 === 1 ? 'bg-slate-900/30' : ''}>
                   <td className={`py-2 pr-3 font-medium ${LEVEL_COLORS[i]}`}>
                     {i + 1}

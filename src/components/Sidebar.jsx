@@ -5,11 +5,16 @@ const CALCULATORS = [
   { id: 'windload', labelKey: 'calcWindLoad', subtitleKey: 'calcWindLoadSubtitle', active: true },
 ]
 
-export default function Sidebar({ activeCalc, onSelect }) {
+export default function Sidebar({ activeCalc, onSelect, isOpen = false, onClose = () => {} }) {
   const { t } = useLanguage()
 
   return (
-    <aside className="w-44 bg-slate-800 border-r border-slate-700 flex-shrink-0 flex flex-col py-3">
+    <aside className={`
+  w-44 bg-slate-800 border-r border-slate-700 flex-shrink-0 flex flex-col py-3
+  fixed inset-y-0 left-0 z-40 transition-transform duration-200
+  md:static md:translate-x-0 md:z-auto
+  ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+`}>
       <p className="px-3 mb-2 text-xs uppercase tracking-widest text-slate-500">
         {t('sidebarCalculators')}
       </p>
@@ -17,7 +22,7 @@ export default function Sidebar({ activeCalc, onSelect }) {
       {CALCULATORS.map(calc => (
         <button
           key={calc.id}
-          onClick={() => onSelect(calc.id)}
+          onClick={() => { onSelect(calc.id); onClose() }}
           className={`mx-2 mb-1 rounded-md px-3 py-2 text-left transition-colors ${
             activeCalc === calc.id
               ? 'bg-blue-700 text-white'

@@ -17,7 +17,7 @@ const DEFAULT_CONFIG = {
   ],
 }
 
-export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindLoad = () => {}, mastHeight = null, onMastHeightChange = () => {}, onGuyWireChange = () => {} }) {
+export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindLoad = () => {}, mastHeight = null, onMastHeightChange = () => {}, onGuyWireChange = () => {}, prefill = null }) {
   const [config, setConfig] = useState(DEFAULT_CONFIG)
   const { t } = useLanguage()
 
@@ -25,6 +25,23 @@ export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindL
     if (mastHeight === null) return
     setConfig(c => c.mastHeight === mastHeight ? c : { ...c, mastHeight })
   }, [mastHeight])
+
+  useEffect(() => {
+    if (!prefill) return
+    setConfig(c => ({
+      ...c,
+      mastHeight: prefill.mastHeight,
+      levels: prefill.levels.length,
+      // Map over existing levelConfig — only overwrite height for prefilled levels,
+      // keep radius/wires from existing config (prevents undefined entries).
+      levelConfig: c.levelConfig.map((existing, i) =>
+        i < prefill.levels.length
+          ? { ...existing, height: prefill.levels[i].height }
+          : existing
+      ),
+    }))
+    onMastHeightChange(prefill.mastHeight)
+  }, [prefill]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function handleConfigChange(newConfig) {
     if (newConfig.mastHeight !== config.mastHeight) onMastHeightChange(newConfig.mastHeight)

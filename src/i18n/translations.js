@@ -120,6 +120,25 @@ export const translations = {
 
     // Footer
     footerLicense: 'MIT-Lizenz',
+
+    // Spider Beam Mast-Konfigurator
+    calcSpiderBeam: 'Spider Beam',
+    calcSpiderBeamSubtitle: 'Mast-Konfigurator',
+    spiderBeamMastLabel: 'Masttyp',
+    spiderBeamHeight: 'Masthöhe',
+    spiderBeamHeightUnit: 'm (1–14)',
+    spiderBeamSegmentsActive: 'Segmente ausgezogen',
+    spiderBeamInGroundtube: 'im Grundrohr',
+    spiderBeamGuyLevels: 'Abspannpunkte',
+    spiderBeamSegment: 'Segment',
+    spiderBeamTransferTitle: 'Übergabe an Abspannungs-Rechner',
+    spiderBeamTransferPreview: 'Beim Öffnen werden folgende Werte übertragen:',
+    spiderBeamOpenGuyWire: 'Abspannungs-Rechner öffnen →',
+    spiderBeamConfirmTitle: 'Abspannrechner überschreiben?',
+    spiderBeamConfirmBody: 'Die aktuellen Werte im Abspannrechner werden ersetzt.',
+    spiderBeamConfirmYes: 'Ja, überschreiben',
+    spiderBeamConfirmCancel: 'Abbrechen',
+    spiderBeamNotActive: 'nicht aktiv',
   },
   en: {
     appTitle: 'Amateur Radio Tower Designer',
@@ -242,5 +261,24 @@ export const translations = {
 
     // Footer
     footerLicense: 'MIT License',
+
+    // Spider Beam Mast-Konfigurator
+    calcSpiderBeam: 'Spider Beam',
+    calcSpiderBeamSubtitle: 'Mast Designer',
+    spiderBeamMastLabel: 'Mast type',
+    spiderBeamHeight: 'Mast height',
+    spiderBeamHeightUnit: 'm (1–14)',
+    spiderBeamSegmentsActive: 'Segments extended',
+    spiderBeamInGroundtube: 'in base tube',
+    spiderBeamGuyLevels: 'Guy wire levels',
+    spiderBeamSegment: 'Segment',
+    spiderBeamTransferTitle: 'Transfer to Guy Wire Calc',
+    spiderBeamTransferPreview: 'The following values will be transferred:',
+    spiderBeamOpenGuyWire: 'Open Guy Wire Calc →',
+    spiderBeamConfirmTitle: 'Overwrite guy wire calc?',
+    spiderBeamConfirmBody: 'The current values in the guy wire calc will be replaced.',
+    spiderBeamConfirmYes: 'Yes, overwrite',
+    spiderBeamConfirmCancel: 'Cancel',
+    spiderBeamNotActive: 'not active',
   },
 }

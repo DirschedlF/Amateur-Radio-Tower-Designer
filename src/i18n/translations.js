@@ -76,6 +76,34 @@ export const translations = {
     colHorizPerWire: 'Horiz. je Draht',
     colTension: 'Drahtspannung',
     loadDisclaimer: 'Planungsschätzung — keine statische Auslegung. Vorspannkraft nicht berücksichtigt.',
+    loadBreakingLoadHint: 'Empfehlung: Mindestbruchlast des Drahtes ≥ 3× berechnete Drahtspannung.',
+
+    // Wind speed tooltip
+    windSpeedTooltipTitle: 'Richtwerte',
+    windSpeedTooltipRow1: 'Leichter Wind',
+    windSpeedTooltipRow2: 'Frischer Wind, Böen',
+    windSpeedTooltipRow3: 'Sturm / Amateurfunk',
+    windSpeedTooltipRow4: 'WZ 1 normativ (DIN EN 1991-1-4)',
+    windSpeedTooltipNote: 'Empfehlung für Dauerinstallationen: ≥ 22,5 m/s',
+
+    // Gust factor tooltip
+    gustFactorTooltipTitle: 'Böenfaktor',
+    gustFactorTooltipText: 'Berücksichtigt kurzzeitige Windspitzen (Böen). Der Standardwert 1,7 entspricht einer konservativen Auslegung für offenes Gelände nach DIN EN 1991-1-4. Typischer Bereich: 1,5–1,7.',
+
+    // cw tooltip (mast)
+    cwTooltipTitle: 'Was ist der cw-Wert?',
+    cwTooltipRow1: 'Tragflügelprofil',
+    cwTooltipRow2: 'Kugel',
+    cwTooltipRow3: 'Rundes Rohr (Mast)',
+    cwTooltipRow4: 'Vierkantrohr',
+    cwTooltipRow5: 'Flachplatte quer',
+    cwTooltipNote: 'cw = 1,1 im Tool: konservativ und physikalisch begründet für Teleskop-Steckmäste.',
+
+    // Report — result labels
+    reportMastForce: 'Windkraft Mast',
+    reportAntennaForce: 'Windkraft Antenne',
+    reportTotalForce: 'Gesamtkraft',
+    reportTotalMoment: 'Biegemoment',
 
     // Report export
     reportButton: 'Bericht',
@@ -85,6 +113,12 @@ export const translations = {
     reportDisclaimer: 'Planungsabschätzung — kein Ersatz für einen statischen Nachweis',
     reportBothRequired: 'Beide Rechner müssen ausgefüllt sein',
     reportPopupBlocked: 'Popup blockiert — bitte Popups für diese Seite erlauben',
+
+    // Header
+    handbuchLink: 'Handbuch',
+
+    // Footer
+    footerLicense: 'MIT-Lizenz',
   },
   en: {
     appTitle: 'Amateur Radio Tower Designer',
@@ -163,6 +197,34 @@ export const translations = {
     colHorizPerWire: 'Horiz. per Wire',
     colTension: 'Wire Tension',
     loadDisclaimer: 'Planning estimate only — not a structural analysis. Pre-tension not considered.',
+    loadBreakingLoadHint: 'Recommendation: Minimum breaking load of wire ≥ 3× calculated tension.',
+
+    // Wind speed tooltip
+    windSpeedTooltipTitle: 'Reference Values',
+    windSpeedTooltipRow1: 'Light wind',
+    windSpeedTooltipRow2: 'Fresh wind, gusts',
+    windSpeedTooltipRow3: 'Storm / amateur radio',
+    windSpeedTooltipRow4: 'Zone 1 normative (EN 1991-1-4)',
+    windSpeedTooltipNote: 'Recommended for permanent installations: ≥ 22.5 m/s',
+
+    // Gust factor tooltip
+    gustFactorTooltipTitle: 'Gust Factor',
+    gustFactorTooltipText: 'Accounts for short-term wind gusts. The default value of 1.7 is conservative for open terrain per EN 1991-1-4. Typical range: 1.5–1.7.',
+
+    // cw tooltip (mast)
+    cwTooltipTitle: 'What is the cw value?',
+    cwTooltipRow1: 'Aerofoil section',
+    cwTooltipRow2: 'Sphere',
+    cwTooltipRow3: 'Round tube (mast)',
+    cwTooltipRow4: 'Square tube',
+    cwTooltipRow5: 'Flat plate (broadside)',
+    cwTooltipNote: 'cw = 1.1 in the tool: conservative and physically justified for telescoping masts.',
+
+    // Report — result labels
+    reportMastForce: 'Wind Force (Mast)',
+    reportAntennaForce: 'Wind Force (Antenna)',
+    reportTotalForce: 'Total Force',
+    reportTotalMoment: 'Bending Moment',
 
     // Report export
     reportButton: 'Report',
@@ -172,5 +234,11 @@ export const translations = {
     reportDisclaimer: 'Planning estimate — not a substitute for structural verification',
     reportBothRequired: 'Both calculators must be filled in',
     reportPopupBlocked: 'Popup blocked — please allow popups for this site',
+
+    // Header
+    handbuchLink: 'Manual',
+
+    // Footer
+    footerLicense: 'MIT License',
   },
 }

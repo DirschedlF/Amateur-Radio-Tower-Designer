@@ -1,10 +1,10 @@
 import { useLanguage } from '../../hooks/useLanguage.jsx'
 
-const SVG_W = 280
-const SVG_H = 220
-const MARGIN = { top: 20, bottom: 30, left: 20, right: 80 }
+const SVG_W = 240
+const SVG_H = 180
+const MARGIN = { top: 14, bottom: 22, left: 16, right: 68 }
 const DRAW_H = SVG_H - MARGIN.top - MARGIN.bottom
-const MAST_X = 80   // centerline x
+const MAST_X = 68   // centerline x
 
 export default function WindLoadDiagram({ config, results }) {
   const { t } = useLanguage()
@@ -41,8 +41,8 @@ export default function WindLoadDiagram({ config, results }) {
   ].join(' ')
 
   // Force arrows — start from mast right edge at the respective height
-  const arrowLen   = 50
-  const arrowGap   = 6     // gap between mast surface and arrow end
+  const arrowLen   = 36
+  const arrowGap   = 5     // gap between mast surface and arrow end
   const mastArmY   = toY(results.mast.momentArm)
   const antennaY   = toY(config.antenna.mountHeight)
   const mastArrowX = MAST_X + pxAtH(results.mast.momentArm)      + arrowGap
@@ -74,31 +74,31 @@ export default function WindLoadDiagram({ config, results }) {
       <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="w-full">
         {/* defs first — marker forward-references fail on some iOS Safari versions */}
         <defs>
-          <marker id="arrowMast" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-            <path d="M6,0 L6,6 L0,3 z" fill="#34d399" />
+          <marker id="arrowMast" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+            <path d="M5,0 L5,5 L0,2.5 z" fill="#34d399" />
           </marker>
-          <marker id="arrowAntenna" markerWidth="6" markerHeight="6" refX="3" refY="3" orient="auto">
-            <path d="M6,0 L6,6 L0,3 z" fill="#fbbf24" />
+          <marker id="arrowAntenna" markerWidth="5" markerHeight="5" refX="2.5" refY="2.5" orient="auto">
+            <path d="M5,0 L5,5 L0,2.5 z" fill="#fbbf24" />
           </marker>
         </defs>
 
         {/* Ground line */}
-        <line x1={20} y1={baseY} x2={SVG_W - 20} y2={baseY} stroke="#475569" strokeWidth="1.5" />
-        <text x={SVG_W / 2} y={baseY + 14} textAnchor="middle" fontSize="10" fill="#64748b">{t('ground')}</text>
+        <line x1={14} y1={baseY} x2={SVG_W - 14} y2={baseY} stroke="#475569" strokeWidth="1" />
+        <text x={SVG_W / 2} y={baseY + 12} textAnchor="middle" fontSize="8" fill="#64748b">{t('ground')}</text>
 
         {/* Mast outline */}
-        <polygon points={mastPoly} fill="#334155" stroke="#64748b" strokeWidth="1" />
+        <polygon points={mastPoly} fill="#334155" stroke="#64748b" strokeWidth="0.75" />
 
         {/* Mast force arrow */}
         {results.mast.force > 0 && (
           <g>
             <line
               x1={mastArrowX + arrowLen} y1={mastArmY}
-              x2={mastArrowX + 4}        y2={mastArmY}
-              stroke="#34d399" strokeWidth="1.5"
+              x2={mastArrowX + 3}        y2={mastArmY}
+              stroke="#34d399" strokeWidth="1"
               markerEnd="url(#arrowMast)"
             />
-            <text x={mastArrowX + arrowLen + 3} y={mastLabelY} fontSize="9" fill="#34d399">
+            <text x={mastArrowX + arrowLen + 3} y={mastLabelY} fontSize="8" fill="#34d399">
               {results.mast.force.toFixed(0)} N
             </text>
           </g>
@@ -107,14 +107,14 @@ export default function WindLoadDiagram({ config, results }) {
         {/* Antenna force arrow */}
         {results.antenna.force > 0 && (
           <g>
-            <circle cx={MAST_X} cy={antennaY} r={4} fill="#fbbf24" />
+            <circle cx={MAST_X} cy={antennaY} r={3} fill="#fbbf24" />
             <line
               x1={antArrowX + arrowLen} y1={antennaY}
-              x2={antArrowX + 4}        y2={antennaY}
-              stroke="#fbbf24" strokeWidth="1.5"
+              x2={antArrowX + 3}        y2={antennaY}
+              stroke="#fbbf24" strokeWidth="1"
               markerEnd="url(#arrowAntenna)"
             />
-            <text x={antArrowX + arrowLen + 3} y={antLabelY} fontSize="9" fill="#fbbf24">
+            <text x={antArrowX + arrowLen + 3} y={antLabelY} fontSize="8" fill="#fbbf24">
               {results.antenna.force.toFixed(0)} N
             </text>
           </g>

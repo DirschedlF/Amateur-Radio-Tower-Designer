@@ -9,7 +9,7 @@ export default function App() {
   const [activeCalc, setActiveCalc] = useState('guywire')
   const [windLoadSnapshot, setWindLoadSnapshot] = useState(null)
   const [guyWireSnapshot, setGuyWireSnapshot] = useState(null)
-  const [sharedMastHeight, setSharedMastHeight] = useState(12)
+  const [sharedMastHeight, setSharedMastHeight] = useState(10)
   const [drawerOpen, setDrawerOpen] = useState(false)
   const { t, toggleLang } = useLanguage()
 
@@ -36,9 +36,17 @@ export default function App() {
           </button>
           <span className="text-amber-400 text-xl">📡</span>
           <span className="font-semibold text-slate-100">{t('appTitle')}</span>
-          <span className="text-xs text-slate-500 font-mono">v0.4.0</span>
+          <span className="text-xs text-slate-500 font-mono">v0.5.0</span>
         </div>
         <div className="flex items-center gap-2">
+          <a
+            href="https://github.com/DirschedlF/Amateur-Radio-Tower-Designer/blob/master/docs/Benutzerhandbuch.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-slate-700 hover:bg-slate-600 text-slate-200 text-sm px-3 py-1 rounded-full transition-colors"
+          >
+            {t('handbuchLink')}
+          </a>
           <ReportButton
             windSnapshot={windLoadSnapshot}
             guyWireSnapshot={guyWireSnapshot}
@@ -67,7 +75,7 @@ export default function App() {
           isOpen={drawerOpen}
           onClose={() => setDrawerOpen(false)}
         />
-        <main className="flex-1 overflow-auto p-4">
+        <main className="flex-1 overflow-auto p-4 flex flex-col">
           <div className={activeCalc === 'guywire' ? '' : 'hidden'}>
             <GuyWireCalc
               windLoadSnapshot={windLoadSnapshot}
@@ -84,6 +92,18 @@ export default function App() {
               onMastHeightChange={setSharedMastHeight}
             />
           </div>
+          <footer className="mt-8 pt-4 border-t border-slate-800 text-xs text-slate-600 flex flex-wrap items-center gap-x-4 gap-y-1">
+            <span>Fritz Dirschedl · DK9RC</span>
+            <a
+              href="https://github.com/DirschedlF/Amateur-Radio-Tower-Designer"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-slate-400 transition-colors"
+            >
+              GitHub
+            </a>
+            <span>{t('footerLicense')}</span>
+          </footer>
         </main>
       </div>
     </div>

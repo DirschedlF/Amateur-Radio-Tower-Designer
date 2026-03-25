@@ -6,10 +6,10 @@ import { calculateWindLoad } from './windload.js'
 import { useLanguage } from '../../hooks/useLanguage.jsx'
 
 const DEFAULT_CONFIG = {
-  windSpeed: 28,
+  windSpeed: 15,
   gustFactor: 1.7,
-  mast: { height: 12, diamBottomMm: 100, diamTopMm: 60, cw: 1.1 },
-  antenna: { area: 0.5, cw: 0.8, mountHeight: 11 },
+  mast: { height: 10, diamBottomMm: 80, diamTopMm: 20, cw: 1.1 },
+  antenna: { area: 0.2, cw: 0.8, mountHeight: 10 },
 }
 
 export default function WindLoadCalc({ onWindLoadChange = () => {}, mastHeight = null, onMastHeightChange = () => {} }) {
@@ -20,8 +20,11 @@ export default function WindLoadCalc({ onWindLoadChange = () => {}, mastHeight =
     if (mastHeight === null) return
     setConfig(c => {
       if (c.mast.height === mastHeight) return c
-      const clampedMount = Math.min(c.antenna.mountHeight, mastHeight)
-      return { ...c, mast: { ...c.mast, height: mastHeight }, antenna: { ...c.antenna, mountHeight: clampedMount } }
+      // If antenna was at (or above) mast top, keep it at the new top.
+      // Otherwise just clamp downward — don't raise a deliberately lowered antenna.
+      const wasAtTop = c.antenna.mountHeight >= c.mast.height
+      const newMount = wasAtTop ? mastHeight : Math.min(c.antenna.mountHeight, mastHeight)
+      return { ...c, mast: { ...c.mast, height: mastHeight }, antenna: { ...c.antenna, mountHeight: newMount } }
     })
   }, [mastHeight])
 
@@ -78,12 +81,12 @@ export default function WindLoadCalc({ onWindLoadChange = () => {}, mastHeight =
     <div className="flex flex-col gap-4">
       <WindLoadInputs config={config} onChange={handleConfigChange} />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-4">
         <WindLoadDiagram config={config} results={memoised?.results ?? null} />
         <WindLoadResults results={memoised?.results ?? null} />
       </div>
 
-      <p className="text-xs text-slate-500 border border-slate-700 rounded-lg px-4 py-3 leading-relaxed">
+      <p className="text-xs text-amber-300/80 bg-amber-500/10 border border-amber-500/40 rounded-lg px-4 py-3 leading-relaxed">
         ⚠️ {t('windLoadDisclaimer')}
       </p>
     </div>

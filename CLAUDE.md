@@ -46,22 +46,31 @@ React 18 + Vite 7 + Tailwind CSS 3 (dark theme). ESLint 9 flat config (`eslint.c
 - `guywire.js` level objects include `height` and `radius` (needed by load calc)
 - `GuyWireCalc.jsx` calls `calculateGuyWireLoad` internally via second `useMemo` → derives `loadResult = { levels, q, windSpeed } | null` → passes to `GuyWireLoad`; emits `guyWireSnapshot` via `useEffect([results, loadRaw])` + `onGuyWireChange` prop
 - `GuyWireLoad.jsx` child: props `{ loadResult, onNavigateToWindLoad }` — empty state when `loadResult === null`, results table otherwise (section force, horiz/wire, tension N + kgf)
-- `guywireload.js`: `calculateGuyWireLoad({ snapshot, levelResults })` — sectional method, midpoint-rule boundaries, antenna force always to top level
+- `guywireload.js`: `calculateGuyWireLoad({ snapshot, levelResults })` — moment method: `R_i = M_section_i / h_i` where `M_section = q×cw×∫d(z)×z dz` (conical mast, midpoint-rule section boundaries); antenna moment `F_ant × h_ant` added to top-level section
 - `guyWireSnapshot` shape: `{ mastHeight, levels, grandTotalLength, loadResults: array | null }`
 - Layout: no `max-w-*` on outer wrapper — table needs full width (`whitespace-nowrap` on `<th>` and wire-length `<td>`)
+- `GuyWireDiagram.jsx`: uniform scale `scale = min(availH/mastHeight, availW/maxRadius)` preserves real wire angles in the SVG
 
 **Wind Load Calculator** (`src/calculators/windload/`):
 
 - Physics: `q = 0.5 × 1.25 × v² × gustFactor` (default 1.7). Mast area = trapezoid (conical mast).
 - Emits snapshot via `useEffect([memoised])` → `onWindLoadChange` prop
 - Snapshot: `{ q, windSpeed, mastHeight, diamBottomMm, diamTopMm, mastCw, antennaForce, antennaMountHeight, antennaArea, antennaCw, mastForce, mastMoment, totalForce, totalMoment }`
-- `windSpeed` is canonical; q field uses `defaultValue + key={derivedQ} + onBlur` to avoid cursor-jumping
-- `handleConfigChange` clamps `antenna.mountHeight` to `mast.height` (`Math.min`) — same clamp in the mastHeight sync `useEffect`
+- `windSpeed` is canonical; q is derived (`0.5 × 1.25 × v² × gustFactor`) and shown as a read-only display — not editable
+- `handleConfigChange` clamps `antenna.mountHeight` to `mast.height` (`Math.min`) — same clamp in the mastHeight sync `useEffect`; `wasAtTop` pattern: if antenna was at (or above) mast top when mast height changes, antenna follows to new top instead of being clamped down
 
 **Mobile Navigation:**
 
 - `Sidebar.jsx` accepts `isOpen` + `onClose` props; uses `fixed` positioning + CSS `translate-x` for drawer behavior on mobile; `md:static` restores normal flow on desktop
 - `App.jsx` adds hamburger button (`md:hidden`), overlay backdrop, Escape-key handler — all gated on `drawerOpen` state
+
+**Tooltip component (`src/components/Tooltip.jsx`):**
+
+- Props: `content` (ReactNode), `align` (`'left'` | `'right'`). Hover + click toggle. `relative inline-block` wrapper, `absolute z-50` popup, `w-72`. Used in `WindLoadInputs.jsx` for wind speed reference values.
+
+**Header links:**
+
+- `App.jsx` header contains a Handbuch `<a>` link (opens GitHub `docs/Benutzerhandbuch.md` in new tab) and the `ReportButton`. Both use `t('handbuchLink')` / `t('reportButton')` for i18n.
 
 **Report Export (`src/report/`, `src/components/ReportButton.jsx`):**
 

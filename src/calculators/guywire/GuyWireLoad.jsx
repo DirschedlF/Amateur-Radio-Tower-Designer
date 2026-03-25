@@ -74,8 +74,11 @@ export default function GuyWireLoad({ loadResult, onNavigateToWindLoad }) {
             </tbody>
           </table>
 
-          <p className="text-xs text-slate-500 border border-slate-700 rounded-lg px-3 py-2 mt-4 leading-relaxed">
+          <p className="text-xs text-amber-300/80 bg-amber-500/10 border border-amber-500/40 rounded-lg px-3 py-2 mt-4 leading-relaxed">
             ⚠️ {t('loadDisclaimer')}
+          </p>
+          <p className="text-xs text-slate-500 border border-slate-700 rounded-lg px-3 py-2 mt-2 leading-relaxed">
+            💡 {t('loadBreakingLoadHint')}
           </p>
         </>
       )}

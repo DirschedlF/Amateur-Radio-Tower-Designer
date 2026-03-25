@@ -5,19 +5,21 @@ import GuyWireResults from './GuyWireResults.jsx'
 import GuyWireLoad from './GuyWireLoad.jsx'
 import { calculateGuyWires } from './guywire.js'
 import { calculateGuyWireLoad } from './guywireload.js'
+import { useLanguage } from '../../hooks/useLanguage.jsx'
 
 const DEFAULT_CONFIG = {
-  mastHeight: 12,
-  levels: 2,
+  mastHeight: 10,
+  levels: 1,
   levelConfig: [
-    { height: 6,  radius: 5,  wires: 3 },
-    { height: 11, radius: 8,  wires: 3 },
-    { height: 0,  radius: 0,  wires: 3 },
+    { height: 7, radius: 7, wires: 4 },
+    { height: 0, radius: 0, wires: 3 },
+    { height: 0, radius: 0, wires: 3 },
   ],
 }
 
 export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindLoad = () => {}, mastHeight = null, onMastHeightChange = () => {}, onGuyWireChange = () => {} }) {
   const [config, setConfig] = useState(DEFAULT_CONFIG)
+  const { t } = useLanguage()
 
   useEffect(() => {
     if (mastHeight === null) return
@@ -76,6 +78,10 @@ export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindL
         loadResult={loadResult}
         onNavigateToWindLoad={onNavigateToWindLoad}
       />
+
+      <p className="text-xs text-amber-300/80 bg-amber-500/10 border border-amber-500/40 rounded-lg px-4 py-3 leading-relaxed">
+        ⚠️ {t('windLoadDisclaimer')}
+      </p>
     </div>
   )
 }

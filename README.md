@@ -4,13 +4,13 @@ Wer einen Amateurfunk-Mast plant, jongliert mit Masthöhe, Abspanngeometrie und 
 
 Das Tool berechnet zunächst die **Abspanngeometrie**: Drahtlängen, Winkel und Gesamtmaterial für bis zu drei Abspannebenen — sofort, während man die Werte eingibt. Parallel dazu ermittelt der **Windlast-Rechner** den dynamischen Winddruck auf Mast und Antenne nach EN 1991-1-4.
 
-Der entscheidende Schritt: Beide Rechner sind verknüpft. Aus der Windlast und der Abspanngeometrie berechnet das Tool direkt die **Drahtspannung je Ebene** — in Newton und Kilogramm-Kraft, aufgeschlüsselt nach der Abschnittsmethode. So sieht man auf einen Blick, welche Abspannebene am stärksten belastet wird und ob die geplanten Drähte dafür ausgelegt sein müssen.
+Der entscheidende Schritt: Beide Rechner sind verknüpft. Aus der Windlast und der Abspanngeometrie berechnet das Tool direkt die **Drahtspannung je Ebene** — in Newton und Kilogramm-Kraft, auf Basis der Momentenmethode (Kippmoment ÷ Hebelarm). So sieht man auf einen Blick, welche Abspannebene am stärksten belastet wird und ob die geplanten Drähte dafür ausgelegt sein müssen.
 
 Das Ergebnis ist kein Statikgutachten, sondern eine fundierte **Planungsgrundlage**: schnell, nachvollziehbar, kostenlos — direkt im Browser, ohne Installation.
 
 Alle Eingaben und Ergebnisse lassen sich als kompakter **1-Seiten-Bericht** exportieren — druckbar (→ PDF via Browser) oder als standalone HTML-Datei. Das Interface ist vollständig **mobilgeräte-tauglich**: auf kleinen Screens ersetzt ein Hamburger-Menü die feste Seitenleiste.
 
-**Version:** 0.4.0 · [Live](https://dirschedlf.github.io/Amateur-Radio-Tower-Designer/)
+**Version:** 0.5.0 · [Live](https://dirschedlf.github.io/Amateur-Radio-Tower-Designer/)
 
 ## Dokumentation
 
@@ -39,7 +39,7 @@ Calculates geometry and wind load tensions for guyed masts with 1, 2, or 3 wire 
 
 **Load analysis** (requires Wind Load Calculator to be filled in):
 
-- Section wind force per level (sectional method / Abschnittsmethode)
+- Section overturning moment per level (moment method: R = M / h)
 - Horizontal force per wire
 - Wire tension in N and kgf
 
@@ -51,7 +51,7 @@ Calculates wind forces and bending moments for telescoping conical masts with mo
 
 **Inputs:**
 
-- Wind speed (m/s) or dynamic pressure (N/m²) — live sync
+- Wind speed (m/s) — dynamic pressure q displayed read-only
 - Gust factor (applied to dynamic pressure, default 1.7)
 - Mast: height, bottom diameter, top diameter (mm), drag coefficient cw
 - Antenna: projected area (m²), drag coefficient cw, mounting height (m)
@@ -107,4 +107,4 @@ The calculations in this tool are technical estimates for planning purposes only
 
 ---
 
-Developed by Fritz Dirschedl (DK9RC) · ![version](https://img.shields.io/badge/version-0.4.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![React](https://img.shields.io/badge/React-18.2-61DAFB?logo=react&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38BDF8?logo=tailwindcss&logoColor=white)
+Developed by Fritz Dirschedl (DK9RC) · ![version](https://img.shields.io/badge/version-0.5.0-blue) ![license](https://img.shields.io/badge/license-MIT-green) ![React](https://img.shields.io/badge/React-18.2-61DAFB?logo=react&logoColor=white) ![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-38BDF8?logo=tailwindcss&logoColor=white)

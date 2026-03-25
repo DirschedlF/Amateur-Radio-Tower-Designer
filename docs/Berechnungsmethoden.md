@@ -134,11 +134,19 @@ M_gesamt = M_Mast + M_Antenne
 
 ---
 
-## 3. Guy Wire Load — Belastungsberechnung (Abschnittsmethode)
+## 3. Guy Wire Load — Belastungsberechnung (Momentenmethode)
 
 ### 3.1 Methode
 
-Die Drahtspannungen werden über die **Abschnittsmethode** (Sectional Method) bestimmt. Der Mast wird in Abschnitte unterteilt, wobei jeder Abschnitt einer Abspannebene zugeordnet ist. Die Abschnittsgrenzen folgen der **Mittelpunktregel**: Die Grenze zwischen zwei benachbarten Ebenen liegt auf halbem Weg zwischen den Befestigungshöhen.
+Die Drahtspannungen werden über die **Momentenmethode** bestimmt. Physikalische Grundlage ist die Standsicherheit des Mastes gegen Kippen: Das Kippmoment der Windlast um den Mastfuß muss durch das Rückstellmoment der Abspanndrähte aufgehoben werden.
+
+Der Mast wird in Abschnitte unterteilt, wobei jeder Abschnitt einer Abspannebene zugeordnet ist. Für jede Ebene wird das **Kippmoment ihres Abschnitts** um den Mastfuß berechnet und durch die Befestigungshöhe dividiert — das ergibt die erforderliche Horizontalkraft am Abspannpunkt:
+
+```
+R_i = M_Abschnitt,i / h_i
+```
+
+Diese Formulierung stellt sicher, dass eine höhere Befestigung (größerer Hebelarm) eine **geringere** erforderliche Drahtkraft ergibt — physikalisch korrektes Verhalten für eine gelenkig gelagerte Stütze.
 
 Diese Methode setzt voraus, dass der Windlast-Rechner vorher ausgefüllt wurde; die Ergebnisse werden direkt übernommen.
 
@@ -153,7 +161,7 @@ Gegeben N Abspannebenen mit Befestigungshöhen h₁ < h₂ < … < h_N und Gesam
 | N (oberste) | (h_{N−1} + h_N) / 2 | H |
 | — (N = 1) | 0 | H |
 
-### 3.3 Windkraft je Abschnitt
+### 3.3 Kippmoment je Abschnitt
 
 Der Mastdurchmesser verläuft linear mit der Höhe z:
 
@@ -161,24 +169,52 @@ Der Mastdurchmesser verläuft linear mit der Höhe z:
 d(z) = d_u + (d_o − d_u) × z / H
 ```
 
-Für einen Abschnitt von z_a bis z_b ergibt sich die Trapezfläche:
+Für einen Abschnitt von z_a bis z_b ergibt sich die Windkraft (wird zur Anzeige als „Abschnittskraft" verwendet):
 
 ```
 A_Abschnitt = (d(z_a) + d(z_b)) / 2 × (z_b − z_a)
 F_Abschnitt = q × c_w × A_Abschnitt
 ```
 
+Das Kippmoment des Abschnitts um den Mastfuß (z = 0) ist das Integral der Windlast gewichtet mit der Höhe:
+
+```
+M_Abschnitt = q × c_w × ∫[z_a..z_b] d(z) × z dz
+```
+
+Mit linearem Durchmesserverlauf ergibt sich die geschlossene Form:
+
+```
+M_Abschnitt = q × c_w × [ d_u × z²/2 + slope × z³/3 ] ausgewertet von z_a bis z_b
+
+mit slope = (d_o − d_u) / H
+```
+
 ### 3.4 Antennenkraft
 
-Die gesamte Windkraft der Antenne (F_Antenne aus dem Windlast-Rechner) wird konservativ der **obersten Abspannebene** zugerechnet, unabhängig von der tatsächlichen Montagehöhe. Dies entspricht dem häufigsten Anwendungsfall (Antenne oberhalb der letzten Abspannebene) und ist in jedem Fall auf der sicheren Seite.
+Die Windkraft der Antenne (F_Antenne) greift am aerodynamischen Schwerpunkt h_A an und erzeugt ein Kippmoment:
 
 ```
-F_gesamt,N = F_Abschnitt,N + F_Antenne
+M_Antenne = F_Antenne × h_A
 ```
+
+Dieses Moment wird dem Kippmoment der **obersten Abspannebene** addiert:
+
+```
+M_gesamt,N = M_Abschnitt,N + M_Antenne
+```
+
+Eine höher montierte Antenne erzeugt damit ein größeres Moment und erhöht die Spannung der obersten Abspanndrähte entsprechend — was dem realen physikalischen Verhalten entspricht.
 
 ### 3.5 Drahtspannung
 
-Der Winkel α (von der Horizontalen) stammt direkt aus der Abspanngeometrie (Kapitel 1). Damit gilt:
+Erforderliche Horizontalkraft an Ebene i:
+
+```
+R_i = M_gesamt,i / h_i
+```
+
+Der Winkel α (von der Horizontalen) stammt direkt aus der Abspanngeometrie (Kapitel 1):
 
 ```
 cos α = r / L    (äquivalent zu cos(α × π/180))
@@ -187,28 +223,27 @@ cos α = r / L    (äquivalent zu cos(α × π/180))
 Horizontalkraft je Draht:
 
 ```
-F_horiz = F_gesamt / n
+F_horiz = R_i / n
 ```
 
 Drahtspannung (Zugkraft im Draht):
 
 ```
-T = F_gesamt / (n × cos α)
+T = R_i / (n × cos α)
 ```
 
 Umrechnung in Kilogramm-Kraft:
 
-```
+```text
 T_kgf = T / 9,81
 ```
 
 ### 3.6 Annahmen
 
 - Alle Drähte einer Ebene tragen gleichmäßig (symmetrische Abspannung, gleichmäßige Windlast).
-- Der Mast wird als Pendelstütze (gelenkig am Fuß) modelliert; die horizontale Windkraft wird vollständig von den Abspanndrähten aufgenommen.
+- Der Mast wird als biegestarre Pendelstütze (Kippgelenk am Fuß, kein Biegemoment am Fuß) modelliert; das Fundament kann Horizontalkräfte aufnehmen.
 - Vorspannkraft der Drähte wird nicht berücksichtigt; die berechnete Spannung ist die reine windbedingte Zusatzkraft.
 - Dynamische Lasten, Schnee- und Eislasten sowie seismische Einwirkungen bleiben unberücksichtigt.
-- Die Antennenkraft wird der obersten Ebene zugeordnet (konservativ).
 
 ---
 

@@ -87,7 +87,7 @@ export function generateReport({ windSnapshot, guyWireSnapshot, lang }) {
 </head>
 <body>
 <h1>📡 ${t('reportTitle')}</h1>
-<p class="meta">v0.5.0 · ${date}</p>
+<p class="meta">v0.6.0 · ${date}</p>
 
 <div class="grid">
   <div class="section">

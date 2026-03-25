@@ -12,35 +12,59 @@ export default function WindLoadDiagram({ config, results }) {
 
   const mastHeight = config.mast.height || 1
   const rBottom = (config.mast.diamBottomMm / 1000 / 2) || 0.01
-  const rTop = (config.mast.diamTopMm / 1000 / 2) || 0.005
+  const rTop    = (config.mast.diamTopMm   / 1000 / 2) || 0.005
 
   // Scale: map mastHeight → DRAW_H
   const scale = DRAW_H / mastHeight
-  const toY = h => MARGIN.top + DRAW_H - h * scale
+  const toY   = h => MARGIN.top + DRAW_H - h * scale
 
   const baseY = toY(0)
-  const topY = toY(mastHeight)
-  const maxR = Math.max(rBottom, rTop)
-  const rScale = Math.min(40, 40 / maxR) // px per meter, max 40px radius
-  const pxBottom = rBottom * rScale
-  const pxTop = rTop * rScale
+  const topY  = toY(mastHeight)
+  const maxR  = Math.max(rBottom, rTop)
+  const rScale = Math.min(40, 40 / maxR)   // px per metre, max 40 px radius
+
+  // Radius in px at a given height (for correct arrow start position on tapered mast)
+  const pxAtH = h => {
+    const r = rBottom + (rTop - rBottom) * (h / mastHeight)
+    return r * rScale
+  }
+
+  const pxBottom = pxAtH(0)
+  const pxTopPx  = pxAtH(mastHeight)
 
   // Mast trapezoid points
-  const mastLeft = [
+  const mastPoly = [
     `${MAST_X - pxBottom},${baseY}`,
-    `${MAST_X - pxTop},${topY}`,
-  ]
-  const mastRight = [
-    `${MAST_X + pxTop},${topY}`,
+    `${MAST_X - pxTopPx},${topY}`,
+    `${MAST_X + pxTopPx},${topY}`,
     `${MAST_X + pxBottom},${baseY}`,
-  ]
-  const mastPoly = [...mastLeft, ...mastRight].join(' ')
+  ].join(' ')
 
-  // Force arrows
-  const mastArmY = toY(results.mast.momentArm)
-  const antennaY = toY(config.antenna.mountHeight)
-  const arrowLen = 50
-  const arrowX = MAST_X + pxTop + 6
+  // Force arrows — start from mast right edge at the respective height
+  const arrowLen   = 50
+  const arrowGap   = 6     // gap between mast surface and arrow end
+  const mastArmY   = toY(results.mast.momentArm)
+  const antennaY   = toY(config.antenna.mountHeight)
+  const mastArrowX = MAST_X + pxAtH(results.mast.momentArm)      + arrowGap
+  const antArrowX  = MAST_X + pxAtH(config.antenna.mountHeight)  + arrowGap
+
+  // Collision avoidance: separate label y-positions if arrows are too close
+  const Y_MIN_GAP = 12
+  let mastLabelY = mastArmY + 4
+  let antLabelY  = antennaY + 4
+  if (results.antenna.force > 0) {
+    const gap = antennaY - mastArmY   // positive → antenna renders lower (smaller height m)
+    if (Math.abs(gap) < Y_MIN_GAP) {
+      const shift = Math.ceil((Y_MIN_GAP - Math.abs(gap)) / 2) + 1
+      if (gap >= 0) {
+        mastLabelY = mastArmY - shift
+        antLabelY  = antennaY + shift
+      } else {
+        antLabelY  = antennaY - shift
+        mastLabelY = mastArmY + shift
+      }
+    }
+  }
 
   return (
     <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
@@ -69,12 +93,12 @@ export default function WindLoadDiagram({ config, results }) {
         {results.mast.force > 0 && (
           <g>
             <line
-              x1={arrowX + arrowLen} y1={mastArmY}
-              x2={arrowX + 4} y2={mastArmY}
+              x1={mastArrowX + arrowLen} y1={mastArmY}
+              x2={mastArrowX + 4}        y2={mastArmY}
               stroke="#34d399" strokeWidth="1.5"
               markerEnd="url(#arrowMast)"
             />
-            <text x={arrowX + arrowLen + 3} y={mastArmY + 4} fontSize="9" fill="#34d399">
+            <text x={mastArrowX + arrowLen + 3} y={mastLabelY} fontSize="9" fill="#34d399">
               {results.mast.force.toFixed(0)} N
             </text>
           </g>
@@ -85,12 +109,12 @@ export default function WindLoadDiagram({ config, results }) {
           <g>
             <circle cx={MAST_X} cy={antennaY} r={4} fill="#fbbf24" />
             <line
-              x1={arrowX + arrowLen} y1={antennaY}
-              x2={arrowX + 4} y2={antennaY}
+              x1={antArrowX + arrowLen} y1={antennaY}
+              x2={antArrowX + 4}        y2={antennaY}
               stroke="#fbbf24" strokeWidth="1.5"
               markerEnd="url(#arrowAntenna)"
             />
-            <text x={arrowX + arrowLen + 3} y={antennaY + 4} fontSize="9" fill="#fbbf24">
+            <text x={antArrowX + arrowLen + 3} y={antLabelY} fontSize="9" fill="#fbbf24">
               {results.antenna.force.toFixed(0)} N
             </text>
           </g>

@@ -2,29 +2,34 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a new "Spider Beam Mast-Konfigurator" calculator that lets users configure a Spiderbeam 14m HD telescoping mast, select guy wire attachment points by clicking, and transfer the configuration to the existing Guy Wire calculator.
+**Goal:** Add a standalone Spider Beam Mast-Konfigurator calculator that lets users configure a Spiderbeam 14m HD telescoping mast, select guy wire attachment points, and transfer the configuration to the existing guy wire calculator via a confirmation dialog.
 
-**Architecture:** Standalone calculator following the established pattern (pure-JS logic + Calc.jsx orchestrator + child components). Two new App.jsx states (`pendingPrefill` / `confirmedPrefill`) decouple the transfer dialog from the actual GuyWireCalc update, preventing silent overwrites on cancel. GuyWireCalc gains a `prefill` prop that fires once on change.
+**Architecture:** Fully decoupled new calculator — no shared reactive state. SpiderBeamCalc calls `onConfigureGuyWire(config)` when the user clicks the transfer button, triggering a confirmation dialog in App.jsx. On confirmation, `confirmedPrefill` is passed as a one-shot prop to GuyWireCalc. After that, the two calculators are completely independent.
 
-**Tech Stack:** React 18, Vite 7, Tailwind CSS 3, Vitest
-
-**Spec:** `docs/superpowers/specs/2026-03-25-spiderbeam-designer-design.md`
+**Tech Stack:** React 18, Vite 7, Tailwind CSS 3 (dark theme), Vitest for unit tests, custom i18n via `useLanguage` hook (`src/hooks/useLanguage.jsx`).
 
 ---
 
 ## File Map
 
-| Action | File | Responsibility |
-| ------ | ---- | -------------- |
-| Create | `src/calculators/spiderbeam/spiderbeam.js` | Pure mast calculation logic, mast configs |
-| Create | `src/calculators/spiderbeam/SpiderBeamCalc.jsx` | Orchestrator, owns state |
-| Create | `src/calculators/spiderbeam/SpiderBeamDiagram.jsx` | SVG mast diagram |
-| Create | `src/calculators/spiderbeam/SpiderBeamResults.jsx` | Attachment point controls + transfer box |
-| Create | `tests/spiderbeam.test.js` | Unit tests for spiderbeam.js |
-| Modify | `src/i18n/translations.js` | 12 new i18n keys |
-| Modify | `src/components/Sidebar.jsx` | Add spiderbeam entry to CALCULATORS |
-| Modify | `src/calculators/guywire/GuyWireCalc.jsx` | Add `prefill` prop + useEffect |
-| Modify | `src/App.jsx` | Wire SpiderBeamCalc, add pendingPrefill/confirmedPrefill, add confirm dialog |
+### New Files
+
+| File | Responsibility |
+|---|---|
+| `src/calculators/spiderbeam/spiderbeam.js` | Pure calculation: active segments, attachment point heights, availability |
+| `src/calculators/spiderbeam/SpiderBeamCalc.jsx` | Orchestrator: holds `desiredHeight` + `activeGuyLevels` state, calls pure fn via `useMemo` |
+| `src/calculators/spiderbeam/SpiderBeamDiagram.jsx` | SVG mast diagram (Grundrohr, active segments, attachment points with guy wire lines) |
+| `src/calculators/spiderbeam/SpiderBeamResults.jsx` | Right panel: height input, clickable attachment points, transfer box + button |
+| `tests/spiderbeam.test.js` | Unit tests for `spiderbeam.js` |
+
+### Modified Files
+
+| File | Change |
+|---|---|
+| `src/i18n/translations.js` | Add ~17 new i18n keys (DE + EN) |
+| `src/components/Sidebar.jsx` | Add `'spiderbeam'` entry to `CALCULATORS` array |
+| `src/App.jsx` | Add `pendingPrefill`/`confirmedPrefill` state, confirmation dialog, SpiderBeamCalc mount |
+| `src/calculators/guywire/GuyWireCalc.jsx` | Add `prefill` prop + `useEffect` to apply it |
 
 ---
 
@@ -33,63 +38,61 @@
 **Files:**
 - Modify: `src/i18n/translations.js`
 
-Add the new keys to both `de` and `en` objects. The `de` block ends at line 123 (closing brace of `de`); add before it. The `en` block ends at line 245; add before it.
-
-- [ ] **Step 1.1: Add DE keys to `translations.js`**
-
-In `src/i18n/translations.js`, find the comment `// Header` in the `de` block (line ~118) and insert before it:
+- [ ] **Step 1: Add DE keys** — append inside the `de` object, after the last existing key
 
 ```js
-    // Spider Beam Mast-Konfigurator
-    calcSpiderBeam: 'Spider Beam',
-    calcSpiderBeamSubtitle: 'Mast-Konfigurator',
-    spiderBeamMastLabel: 'Masttyp',
-    spiderBeamHeight: 'Masthöhe',
-    spiderBeamSegmentsActive: 'Segmente ausgezogen',
-    spiderBeamInGroundtube: 'im Grundrohr',
-    spiderBeamGuyLevels: 'Abspannpunkte',
-    spiderBeamLevelActive: 'aktiv',
-    spiderBeamLevelInactive: 'nicht ausgezogen',
-    spiderBeamTransferTitle: 'Übergabe an Abspannungs-Rechner',
-    spiderBeamOpenGuyWire: 'Abspannungs-Rechner öffnen →',
-    spiderBeamConfirmTitle: 'Abspannrechner überschreiben?',
-    spiderBeamConfirmBody: 'Aktuelle Werte im Abspannrechner werden ersetzt:',
-    spiderBeamConfirmYes: 'Ja, überschreiben',
-    spiderBeamConfirmCancel: 'Abbrechen',
+// Spider Beam Mast-Konfigurator
+calcSpiderBeam: 'Spider Beam',
+calcSpiderBeamSubtitle: 'Mast-Konfigurator',
+spiderBeamMastLabel: 'Masttyp',
+spiderBeamHeight: 'Masthöhe',
+spiderBeamHeightUnit: 'm (1–14)',
+spiderBeamSegmentsActive: 'Segmente ausgezogen',
+spiderBeamInGroundtube: 'im Grundrohr',
+spiderBeamGuyLevels: 'Abspannpunkte',
+spiderBeamSegment: 'Segment',
+spiderBeamTransferTitle: 'Übergabe an Abspannungs-Rechner',
+spiderBeamTransferPreview: 'Beim Öffnen werden folgende Werte übertragen:',
+spiderBeamOpenGuyWire: 'Abspannungs-Rechner öffnen →',
+spiderBeamConfirmTitle: 'Abspannrechner überschreiben?',
+spiderBeamConfirmBody: 'Die aktuellen Werte im Abspannrechner werden ersetzt.',
+spiderBeamConfirmYes: 'Ja, überschreiben',
+spiderBeamConfirmCancel: 'Abbrechen',
+spiderBeamNotActive: 'nicht aktiv',
 ```
 
-- [ ] **Step 1.2: Add EN keys to `translations.js`**
-
-Find the comment `// Header` in the `en` block and insert before it:
+- [ ] **Step 2: Add EN keys** — append inside the `en` object, after the last existing key
 
 ```js
-    // Spider Beam Mast-Konfigurator
-    calcSpiderBeam: 'Spider Beam',
-    calcSpiderBeamSubtitle: 'Mast Designer',
-    spiderBeamMastLabel: 'Mast type',
-    spiderBeamHeight: 'Mast height',
-    spiderBeamSegmentsActive: 'Segments extended',
-    spiderBeamInGroundtube: 'in base tube',
-    spiderBeamGuyLevels: 'Guy wire levels',
-    spiderBeamLevelActive: 'active',
-    spiderBeamLevelInactive: 'not extended',
-    spiderBeamTransferTitle: 'Transfer to Guy Wire Calc',
-    spiderBeamOpenGuyWire: 'Open Guy Wire Calc →',
-    spiderBeamConfirmTitle: 'Overwrite guy wire calc?',
-    spiderBeamConfirmBody: 'Current values in the guy wire calc will be replaced:',
-    spiderBeamConfirmYes: 'Yes, overwrite',
-    spiderBeamConfirmCancel: 'Cancel',
+// Spider Beam Mast-Konfigurator
+calcSpiderBeam: 'Spider Beam',
+calcSpiderBeamSubtitle: 'Mast Designer',
+spiderBeamMastLabel: 'Mast type',
+spiderBeamHeight: 'Mast height',
+spiderBeamHeightUnit: 'm (1–14)',
+spiderBeamSegmentsActive: 'Segments extended',
+spiderBeamInGroundtube: 'in base tube',
+spiderBeamGuyLevels: 'Guy wire levels',
+spiderBeamSegment: 'Segment',
+spiderBeamTransferTitle: 'Transfer to Guy Wire Calc',
+spiderBeamTransferPreview: 'The following values will be transferred:',
+spiderBeamOpenGuyWire: 'Open Guy Wire Calc →',
+spiderBeamConfirmTitle: 'Overwrite guy wire calc?',
+spiderBeamConfirmBody: 'The current values in the guy wire calc will be replaced.',
+spiderBeamConfirmYes: 'Yes, overwrite',
+spiderBeamConfirmCancel: 'Cancel',
+spiderBeamNotActive: 'not active',
 ```
 
-- [ ] **Step 1.3: Verify lint passes**
+- [ ] **Step 3: Run lint**
 
 ```bash
-npm run lint
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run lint
 ```
 
-Expected: no errors, no warnings.
+Expected: 0 errors, 0 warnings.
 
-- [ ] **Step 1.4: Commit**
+- [ ] **Step 4: Commit**
 
 ```bash
 git add src/i18n/translations.js
@@ -98,21 +101,13 @@ git commit -m "feat(i18n): add Spider Beam Mast-Konfigurator translation keys"
 
 ---
 
-## Task 2: Pure Calculation Logic (TDD)
+## Task 2: Pure Calculation Logic + Tests
 
 **Files:**
-- Create: `tests/spiderbeam.test.js`
 - Create: `src/calculators/spiderbeam/spiderbeam.js`
+- Create: `tests/spiderbeam.test.js`
 
-### Physics recap
-
-- 14 segments, each 1.0 m. Segment 1 = Grundrohr (base, always present).
-- For height H: active segments are those with `N ≥ 16 − H` (where N > 1).
-- Segments in Grundrohr: N ∈ {2 … 15−H}.
-- Height of attachment point at segment N = `H + N − 15` (only valid when active).
-- Segment N is available as an attachment point when `H ≥ 16 − N`.
-
-- [ ] **Step 2.1: Write the failing tests**
+- [ ] **Step 1: Write the failing tests first**
 
 Create `tests/spiderbeam.test.js`:
 
@@ -120,159 +115,135 @@ Create `tests/spiderbeam.test.js`:
 import { describe, it, expect } from 'vitest'
 import { MAST_CONFIGS, calculateSpiderBeam } from '../src/calculators/spiderbeam/spiderbeam.js'
 
-const config14 = MAST_CONFIGS['14m_hd']
+const cfg = MAST_CONFIGS['14m_hd']
 
-describe('MAST_CONFIGS', () => {
-  it('exports 14m_hd config with 14 segments', () => {
-    expect(config14.segments).toBe(14)
-    expect(config14.segmentLength).toBe(1.0)
-    expect(config14.guyLevels).toEqual([10, 12, 14])
-  })
-})
+describe('calculateSpiderBeam — H=14 (full height)', () => {
+  const r = calculateSpiderBeam({ mastConfig: cfg, desiredHeight: 14, activeGuyLevels: [10, 12, 14] })
 
-describe('calculateSpiderBeam — full height H=14', () => {
-  const r = calculateSpiderBeam({ mastConfig: config14, desiredHeight: 14, activeGuyLevels: [10, 12, 14] })
-
-  it('all segments 2–14 are active', () => {
-    expect(r.activeSegments).toEqual([2,3,4,5,6,7,8,9,10,11,12,13,14])
-  })
-
-  it('no segments in Grundrohr', () => {
-    expect(r.inGroundtube).toEqual([])
-  })
-
-  it('attachment point seg 10 at 9 m', () => {
-    const p = r.attachmentPoints.find(p => p.segment === 10)
-    expect(p.height).toBe(9)
-    expect(p.available).toBe(true)
-    expect(p.active).toBe(true)
-  })
-
-  it('attachment point seg 12 at 11 m', () => {
-    const p = r.attachmentPoints.find(p => p.segment === 12)
-    expect(p.height).toBe(11)
-  })
-
-  it('attachment point seg 14 at 13 m', () => {
-    const p = r.attachmentPoints.find(p => p.segment === 14)
-    expect(p.height).toBe(13)
-  })
+  it('no segments in groundtube', () => expect(r.inGroundtube).toEqual([]))
+  it('segments 2–14 active', () => expect(r.activeSegments).toEqual([2,3,4,5,6,7,8,9,10,11,12,13,14]))
+  it('attachment points at 9, 11, 13 m', () => expect(r.attachmentPoints.map(p => p.height)).toEqual([9, 11, 13]))
+  it('all available', () => expect(r.attachmentPoints.every(p => p.available)).toBe(true))
+  it('all active', () => expect(r.attachmentPoints.every(p => p.active)).toBe(true))
 })
 
 describe('calculateSpiderBeam — H=12', () => {
-  const r = calculateSpiderBeam({ mastConfig: config14, desiredHeight: 12, activeGuyLevels: [10, 12] })
+  const r = calculateSpiderBeam({ mastConfig: cfg, desiredHeight: 12, activeGuyLevels: [10, 12, 14] })
 
-  it('segments 4–14 active', () => {
-    expect(r.activeSegments).toEqual([4,5,6,7,8,9,10,11,12,13,14])
-  })
-
-  it('segments 2 and 3 in Grundrohr', () => {
-    expect(r.inGroundtube).toEqual([2, 3])
-  })
-
-  it('seg 10 at 7 m', () => {
-    expect(r.attachmentPoints.find(p => p.segment === 10).height).toBe(7)
-  })
-
-  it('seg 12 at 9 m', () => {
-    expect(r.attachmentPoints.find(p => p.segment === 12).height).toBe(9)
-  })
-
-  it('seg 14 at 11 m but not selected', () => {
-    const p = r.attachmentPoints.find(p => p.segment === 14)
-    expect(p.height).toBe(11)
-    expect(p.available).toBe(true)
-    expect(p.active).toBe(false)
-  })
+  it('segments 2+3 in groundtube', () => expect(r.inGroundtube).toEqual([2, 3]))
+  it('segments 4–14 active', () => expect(r.activeSegments).toEqual([4,5,6,7,8,9,10,11,12,13,14]))
+  it('attachment points at 7, 9, 11 m', () => expect(r.attachmentPoints.map(p => p.height)).toEqual([7, 9, 11]))
 })
 
 describe('calculateSpiderBeam — H=10', () => {
-  const r = calculateSpiderBeam({ mastConfig: config14, desiredHeight: 10, activeGuyLevels: [10, 12, 14] })
-
-  it('segments 6–14 active', () => {
-    expect(r.activeSegments).toEqual([6,7,8,9,10,11,12,13,14])
-  })
-
-  it('segments 2–5 in Grundrohr', () => {
-    expect(r.inGroundtube).toEqual([2,3,4,5])
-  })
-
-  it('seg 10 at 5 m', () => {
-    expect(r.attachmentPoints.find(p => p.segment === 10).height).toBe(5)
-  })
+  const r = calculateSpiderBeam({ mastConfig: cfg, desiredHeight: 10, activeGuyLevels: [10, 12, 14] })
+  it('attachment points at 5, 7, 9 m', () => expect(r.attachmentPoints.map(p => p.height)).toEqual([5, 7, 9]))
 })
 
-describe('calculateSpiderBeam — boundary cases', () => {
-  it('H=6: seg 10 is available (exactly at boundary)', () => {
-    const r = calculateSpiderBeam({ mastConfig: config14, desiredHeight: 6, activeGuyLevels: [10] })
+describe('calculateSpiderBeam — H=6 boundary (seg 10 just available)', () => {
+  const r = calculateSpiderBeam({ mastConfig: cfg, desiredHeight: 6, activeGuyLevels: [10, 12, 14] })
+  it('seg 10 available at H=6', () => {
     const p = r.attachmentPoints.find(p => p.segment === 10)
     expect(p.available).toBe(true)
     expect(p.height).toBe(1)
   })
+})
 
-  it('H=5: seg 10 is not available', () => {
-    const r = calculateSpiderBeam({ mastConfig: config14, desiredHeight: 5, activeGuyLevels: [10] })
+describe('calculateSpiderBeam — H=5 boundary (seg 10 unavailable)', () => {
+  const r = calculateSpiderBeam({ mastConfig: cfg, desiredHeight: 5, activeGuyLevels: [10, 12, 14] })
+  it('seg 10 not available', () => {
     const p = r.attachmentPoints.find(p => p.segment === 10)
     expect(p.available).toBe(false)
     expect(p.active).toBe(false)
   })
+})
 
-  it('H=4: seg 12 available, seg 10 not', () => {
-    const r = calculateSpiderBeam({ mastConfig: config14, desiredHeight: 4, activeGuyLevels: [10, 12] })
-    expect(r.attachmentPoints.find(p => p.segment === 12).available).toBe(true)
-    expect(r.attachmentPoints.find(p => p.segment === 10).available).toBe(false)
-  })
+describe('calculateSpiderBeam — H=4 (seg 12 available, seg 10 not)', () => {
+  const r = calculateSpiderBeam({ mastConfig: cfg, desiredHeight: 4, activeGuyLevels: [10, 12, 14] })
+  it('seg 12 available', () => expect(r.attachmentPoints.find(p => p.segment === 12).available).toBe(true))
+  it('seg 10 not available', () => expect(r.attachmentPoints.find(p => p.segment === 10).available).toBe(false))
+})
 
-  it('H=1: no segments active, no attachment points available', () => {
-    const r = calculateSpiderBeam({ mastConfig: config14, desiredHeight: 1, activeGuyLevels: [] })
-    expect(r.activeSegments).toEqual([])
-    expect(r.attachmentPoints.every(p => !p.available)).toBe(true)
+describe('calculateSpiderBeam — H=1 (only groundtube)', () => {
+  const r = calculateSpiderBeam({ mastConfig: cfg, desiredHeight: 1, activeGuyLevels: [10, 12, 14] })
+  it('no active segments', () => expect(r.activeSegments).toEqual([]))
+  it('no attachment points available', () => expect(r.attachmentPoints.every(p => !p.available)).toBe(true))
+})
+
+describe('calculateSpiderBeam — toggle: deselected level is available but not active', () => {
+  it('seg 14 available but not active when omitted', () => {
+    const r = calculateSpiderBeam({ mastConfig: cfg, desiredHeight: 14, activeGuyLevels: [10, 12] })
+    const p14 = r.attachmentPoints.find(p => p.segment === 14)
+    expect(p14.available).toBe(true)
+    expect(p14.active).toBe(false)
   })
 })
 ```
 
-- [ ] **Step 2.2: Run tests — verify they fail**
+- [ ] **Step 2: Run tests — verify they fail**
 
 ```bash
-npm run test -- tests/spiderbeam.test.js
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run test -- spiderbeam
 ```
 
-Expected: FAIL — `Cannot find module '../src/calculators/spiderbeam/spiderbeam.js'`
+Expected: All tests FAIL with "Cannot find module".
 
-- [ ] **Step 2.3: Create `src/calculators/spiderbeam/spiderbeam.js`**
+- [ ] **Step 3: Create `src/calculators/spiderbeam/spiderbeam.js`**
 
 ```js
+/**
+ * calculateSpiderBeam — pure logic for Spiderbeam telescoping mast configuration.
+ *
+ * Segment numbering: 1 = Grundrohr (base tube, always present at 0–1 m).
+ * Segments 2–14 are the sliding sections, pulled out from the top (seg 14 first).
+ *
+ * For desired height H (1–14):
+ *   Active segments (pulled out): N ∈ [2..14] where N ≥ (segments + 2 − H)
+ *   In groundtube:                N ∈ [2..segments + 1 − H]
+ *   Attachment point height for segment N: H + N − (segments + 1)
+ *   Segment N is available when: H ≥ segments + 2 − N
+ */
+
 export const MAST_CONFIGS = {
   '14m_hd': {
     name: 'Spiderbeam 14m HD',
     segments: 14,
-    segmentLength: 1.0,
-    guyLevels: [10, 12, 14],
+    segmentLength: 1.0,        // meters per segment
+    guyLevels: [10, 12, 14],   // segment numbers of attachment points (ascending)
   },
+  // '12m_hd': { … }  — future extension, not in scope
 }
 
 /**
- * @param {{ mastConfig: object, desiredHeight: number, activeGuyLevels: number[] }}
- * @returns {{ activeSegments: number[], inGroundtube: number[], attachmentPoints: object[] }}
+ * @param {object}   params
+ * @param {object}   params.mastConfig       - Entry from MAST_CONFIGS
+ * @param {number}   params.desiredHeight    - 1–mastConfig.segments
+ * @param {number[]} params.activeGuyLevels  - Segment numbers the user has toggled on
+ * @returns {{
+ *   activeSegments: number[],
+ *   inGroundtube: number[],
+ *   attachmentPoints: Array<{segment:number, height:number|null, available:boolean, active:boolean}>
+ * }}
  */
 export function calculateSpiderBeam({ mastConfig, desiredHeight, activeGuyLevels }) {
-  const H = desiredHeight
+  const H = Math.max(1, Math.min(mastConfig.segments, Math.round(desiredHeight)))
   const { segments, guyLevels } = mastConfig
 
-  // Segments 2..segments that are pulled out: N >= 16 - H
-  const firstActive = 16 - H
+  // firstActive: lowest segment number that is pulled out
+  // For 14-segment mast: firstActive = 16 - H (generalised: segments + 2 - H)
+  const firstActive = segments + 2 - H
+
   const activeSegments = []
   const inGroundtube = []
-
   for (let n = 2; n <= segments; n++) {
     if (n >= firstActive) activeSegments.push(n)
     else inGroundtube.push(n)
   }
 
-  // Attachment points
   const attachmentPoints = guyLevels.map(n => {
     const available = n >= firstActive
-    const height = available ? H + n - 15 : null
+    // height formula: H + N - (segments + 1), e.g. H + N - 15 for 14-segment mast
+    const height = available ? H + n - (segments + 1) : null
     return {
       segment: n,
       height,
@@ -285,15 +256,23 @@ export function calculateSpiderBeam({ mastConfig, desiredHeight, activeGuyLevels
 }
 ```
 
-- [ ] **Step 2.4: Run tests — verify they pass**
+- [ ] **Step 4: Run tests — verify they pass**
 
 ```bash
-npm run test -- tests/spiderbeam.test.js
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run test -- spiderbeam
 ```
 
-Expected: all tests PASS
+Expected: All tests PASS.
 
-- [ ] **Step 2.5: Commit**
+- [ ] **Step 5: Run lint**
+
+```bash
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run lint
+```
+
+Expected: 0 errors, 0 warnings.
+
+- [ ] **Step 6: Commit**
 
 ```bash
 git add src/calculators/spiderbeam/spiderbeam.js tests/spiderbeam.test.js
@@ -302,184 +281,154 @@ git commit -m "feat(spiderbeam): add pure calculation logic with unit tests"
 
 ---
 
-## Task 3: SpiderBeamDiagram.jsx
+## Task 3: SVG Diagram Component
 
 **Files:**
 - Create: `src/calculators/spiderbeam/SpiderBeamDiagram.jsx`
 
-Renders an SVG mast cross-section. Follows the pattern of `GuyWireDiagram.jsx`.
-
-- [ ] **Step 3.1: Create `src/calculators/spiderbeam/SpiderBeamDiagram.jsx`**
+- [ ] **Step 1: Create `SpiderBeamDiagram.jsx`**
 
 ```jsx
-import { useLanguage } from '../../hooks/useLanguage.jsx'
+/**
+ * SpiderBeamDiagram — SVG side view of the Spiderbeam telescoping mast.
+ *
+ * Layout (left to right in SVG):
+ *   - Height axis with tick labels (left side)
+ *   - Grundrohr: blue filled rect at base (0–1 m)
+ *   - Eingezogene Segmente: dashed overlay inside Grundrohr
+ *   - Active mast: trapezoid (konisch), wider at bottom, narrower at top
+ *   - Attachment points: yellow circle + horizontal line when active,
+ *     grey circle + dashed line when deactivated
+ *   - Guy wire lines: symbolic, fixed 60 px horizontal offset (not to scale)
+ *   - Segment labels on the right side of each attachment point
+ */
 
-const SVG_W       = 220
-const SVG_H       = 360
-const MAST_X      = 110      // horizontal center of mast
-const GROUND_Y    = 335
-const TOP_MARGIN  = 22
-const WIRE_OFFSET = 60       // symbolic horizontal offset for guy wire lines (not to scale)
+const SVG_W = 220
+const SVG_H = 360
+const AXIS_X = 38
+const MAST_CX = 120
+const MARGIN_TOP = 22
+const MARGIN_BOTTOM = 32
 
-// Mast half-widths in px (linear interpolation between bottom and top of active section)
-const HALF_W_BOTTOM = 22
-const HALF_W_TOP    = 4
-const GRUNDROHR_HALF_W = 28
+const MAST_W_BOTTOM = 54   // px width of mast at 1 m (top of Grundrohr)
+const MAST_W_TOP = 8       // px width of mast at desiredHeight
+const GUY_OFFSET = 60      // symbolic horizontal distance for guy wire lines
 
-export default function SpiderBeamDiagram({ results }) {
-  const { t } = useLanguage()
-  if (!results) return null
+export default function SpiderBeamDiagram({ config, results }) {
+  const { desiredHeight } = config
+  const { inGroundtube, activeSegments, attachmentPoints } = results
 
-  const { desiredHeight, activeSegments, inGroundtube, attachmentPoints } = results
-  const availH = GROUND_Y - TOP_MARGIN
-  const scale  = availH / desiredHeight   // px per metre
+  const drawH = SVG_H - MARGIN_TOP - MARGIN_BOTTOM
+  const scale = drawH / desiredHeight   // px per meter
+  const groundY = SVG_H - MARGIN_BOTTOM
 
-  // Grundrohr block: always 1 m tall, sits at the base
-  const groundtubeH = 1 * scale
-  const groundtubeTop = GROUND_Y - groundtubeH
-
-  // Active mast trapezoid: from 1 m up to desiredHeight m
-  const mastTopY   = GROUND_Y - desiredHeight * scale
-  const mastBaseY  = groundtubeTop
-
-  function halfWidthAt(heightM) {
-    // Interpolate between bottom (1 m) and top (desiredHeight m)
-    const frac = (heightM - 1) / Math.max(desiredHeight - 1, 1)
-    return HALF_W_BOTTOM + (HALF_W_TOP - HALF_W_BOTTOM) * frac
+  function yOf(meters) {
+    return groundY - meters * scale
   }
 
-  const hasActiveMast = activeSegments.length > 0
+  function mastWidthAt(meters) {
+    const frac = meters / desiredHeight
+    return MAST_W_BOTTOM + (MAST_W_TOP - MAST_W_BOTTOM) * frac
+  }
+
+  // Grundrohr: segment 1, height 0–1 m
+  const groundtubeTopY = yOf(1)
+  const groundtubeH = groundY - groundtubeTopY
+
+  // Active mast trapezoid: from 1 m to desiredHeight
+  const wBottom = mastWidthAt(1)
+  const wTop = mastWidthAt(desiredHeight)
+  const trapPoints = [
+    `${MAST_CX - wBottom / 2},${yOf(1)}`,
+    `${MAST_CX + wBottom / 2},${yOf(1)}`,
+    `${MAST_CX + wTop / 2},${yOf(desiredHeight)}`,
+    `${MAST_CX - wTop / 2},${yOf(desiredHeight)}`,
+  ].join(' ')
 
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-      <p className="text-xs uppercase tracking-widest text-slate-500 mb-2">
-        {t('diagramTitle')}
+    <div className="bg-slate-950 border border-slate-700 rounded-lg p-3 flex flex-col">
+      <p className="text-xs text-slate-500 uppercase tracking-widest mb-2">
+        Seitenansicht · {desiredHeight} m
       </p>
-      <svg viewBox={`0 0 ${SVG_W} ${SVG_H}`} className="w-full" style={{ maxHeight: 380 }}>
+      <svg width={SVG_W} height={SVG_H} viewBox={`0 0 ${SVG_W} ${SVG_H}`}>
+        {/* Ground */}
+        <line x1={10} y1={groundY} x2={SVG_W - 10} y2={groundY} stroke="#475569" strokeWidth={2} />
+        <text x={MAST_CX} y={groundY + 14} textAnchor="middle" fontSize={9} fill="#64748b">0 m</text>
 
-        {/* Ground line */}
-        <line x1="0" y1={GROUND_Y} x2={SVG_W} y2={GROUND_Y} stroke="#334155" strokeWidth="2" />
-        <text x={MAST_X} y={GROUND_Y + 13} fill="#475569" fontSize="9" textAnchor="middle">
-          {t('ground')} · 0 m
+        {/* Height axis */}
+        <line x1={AXIS_X} y1={groundY} x2={AXIS_X} y2={MARGIN_TOP}
+          stroke="#1e3a5f" strokeWidth={1} strokeDasharray="2,4" />
+
+        {/* Grundrohr */}
+        <rect x={MAST_CX - MAST_W_BOTTOM / 2} y={groundtubeTopY}
+          width={MAST_W_BOTTOM} height={groundtubeH}
+          rx={2} fill="#1e3a5f" stroke="#3b82f6" strokeWidth={1.5} />
+        <text x={MAST_CX} y={groundtubeTopY - 4} textAnchor="middle" fontSize={8} fill="#60a5fa">
+          Grundrohr · Seg. 1
         </text>
 
-        {/* Grundrohr (Seg. 1) — blue filled rect */}
-        <rect
-          x={MAST_X - GRUNDROHR_HALF_W} y={groundtubeTop}
-          width={GRUNDROHR_HALF_W * 2} height={groundtubeH}
-          fill="#1e3a5f" stroke="#3b82f6" strokeWidth="1.5" rx="2"
-        />
-        <text x={MAST_X} y={groundtubeTop + groundtubeH / 2 + 3}
-          fill="#93c5fd" fontSize="8" textAnchor="middle" fontWeight="600">
-          Seg. 1
-        </text>
-
-        {/* Eingezogene Segmente annotation (if any) */}
+        {/* Eingezogene Segmente (dashed overlay) */}
         {inGroundtube.length > 0 && (
-          <>
-            <rect
-              x={MAST_X - GRUNDROHR_HALF_W + 4} y={groundtubeTop + 2}
-              width={GRUNDROHR_HALF_W * 2 - 8} height={groundtubeH - 4}
-              fill="none" stroke="#334155" strokeWidth="1" strokeDasharray="3,2" rx="1"
-            />
-            <text x={MAST_X + GRUNDROHR_HALF_W + 6} y={groundtubeTop + groundtubeH / 2 + 3}
-              fill="#475569" fontSize="8">
-              {`Seg. ${inGroundtube[0]}${inGroundtube.length > 1 ? `–${inGroundtube[inGroundtube.length - 1]}` : ''}`}
-            </text>
-            <text x={MAST_X + GRUNDROHR_HALF_W + 6} y={groundtubeTop + groundtubeH / 2 + 12}
-              fill="#475569" fontSize="8">
-              {t('spiderBeamInGroundtube')}
-            </text>
-          </>
+          <rect x={MAST_CX - MAST_W_BOTTOM / 2 + 4} y={groundtubeTopY + 2}
+            width={MAST_W_BOTTOM - 8} height={groundtubeH - 4}
+            rx={1} fill="none" stroke="#334155" strokeWidth={1} strokeDasharray="3,2" />
         )}
 
         {/* Active mast trapezoid */}
-        {hasActiveMast && (
-          <polygon
-            points={[
-              `${MAST_X - HALF_W_BOTTOM},${mastBaseY}`,
-              `${MAST_X + HALF_W_BOTTOM},${mastBaseY}`,
-              `${MAST_X + HALF_W_TOP},${mastTopY}`,
-              `${MAST_X - HALF_W_TOP},${mastTopY}`,
-            ].join(' ')}
-            fill="#334155" stroke="#60a5fa" strokeWidth="1.5"
-          />
-        )}
-
-        {/* Mast top label */}
-        {hasActiveMast && (
-          <text x={MAST_X} y={mastTopY - 5} fill="#94a3b8" fontSize="9" textAnchor="middle">
-            ▲ {desiredHeight} m
-          </text>
+        {activeSegments.length > 0 && (
+          <polygon points={trapPoints} fill="#334155" stroke="#60a5fa" strokeWidth={1.5} />
         )}
 
         {/* Attachment points */}
-        {attachmentPoints.map(ap => {
-          if (!ap.available) return null
-          const y    = GROUND_Y - ap.height * scale
-          const hw   = halfWidthAt(ap.height)
-          const color = ap.active ? '#f59e0b' : '#475569'
-          const dash  = ap.active ? undefined : '3,2'
+        {attachmentPoints.map(({ segment, height, available, active }) => {
+          if (!available) return null
+          const py = yOf(height)
+          const hw = mastWidthAt(height) / 2 + 4  // half-width with small margin
 
           return (
-            <g key={ap.segment}>
-              {/* Horizontal attachment line */}
-              <line
-                x1={MAST_X - hw - 8} y1={y}
-                x2={MAST_X + hw + 8} y2={y}
-                stroke={color} strokeWidth={ap.active ? 2 : 1.5}
-                strokeDasharray={dash}
-              />
-              {/* Dot on mast */}
-              <circle
-                cx={MAST_X} cy={y} r={4}
-                fill={ap.active ? color : '#1e293b'}
-                stroke={color} strokeWidth={1.5}
-              />
-              {/* Symbolic guy wire lines (active only) */}
-              {ap.active && (
+            <g key={segment}>
+              <line x1={MAST_CX - hw} y1={py} x2={MAST_CX + hw} y2={py}
+                stroke={active ? '#f59e0b' : '#475569'}
+                strokeWidth={active ? 2 : 1.5}
+                strokeDasharray={active ? undefined : '3,2'} />
+              <circle cx={MAST_CX} cy={py} r={5}
+                fill={active ? '#f59e0b' : '#1e293b'}
+                stroke={active ? '#fbbf24' : '#475569'} strokeWidth={1.5} />
+              {active && (
                 <>
-                  <line
-                    x1={MAST_X} y1={y}
-                    x2={MAST_X - WIRE_OFFSET} y2={GROUND_Y}
-                    stroke={color} strokeWidth="1" strokeDasharray="5,3" opacity="0.6"
-                  />
-                  <line
-                    x1={MAST_X} y1={y}
-                    x2={MAST_X + WIRE_OFFSET} y2={GROUND_Y}
-                    stroke={color} strokeWidth="1" strokeDasharray="5,3" opacity="0.6"
-                  />
+                  <line x1={MAST_CX} y1={py} x2={MAST_CX - GUY_OFFSET} y2={groundY}
+                    stroke="#f59e0b" strokeWidth={1} opacity={0.5} strokeDasharray="5,3" />
+                  <line x1={MAST_CX} y1={py} x2={MAST_CX + GUY_OFFSET} y2={groundY}
+                    stroke="#f59e0b" strokeWidth={1} opacity={0.5} strokeDasharray="5,3" />
                 </>
               )}
-              {/* Height label left */}
-              <text x={MAST_X - hw - 16} y={y + 3}
-                fill={color} fontSize="8" textAnchor="end">
-                {ap.height} m
-              </text>
-              {/* Segment label right */}
-              <text x={MAST_X + hw + 12} y={y + 3}
-                fill={color} fontSize="8">
-                {`Seg. ${ap.segment}`}
-              </text>
+              <text x={AXIS_X - 4} y={py + 3} textAnchor="end" fontSize={9}
+                fill={active ? '#f59e0b' : '#64748b'}>{height} m</text>
+              <text x={MAST_CX + hw + 6} y={py + 3} fontSize={9}
+                fill={active ? '#f59e0b' : '#64748b'}>Seg. {segment}</text>
             </g>
           )
         })}
 
+        {/* Top label */}
+        <text x={MAST_CX} y={MARGIN_TOP - 4} textAnchor="middle" fontSize={9} fill="#94a3b8">
+          ▲ {desiredHeight} m
+        </text>
       </svg>
     </div>
   )
 }
 ```
 
-- [ ] **Step 3.2: Verify lint**
+- [ ] **Step 2: Run lint**
 
 ```bash
-npm run lint
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run lint
 ```
 
-Expected: no errors.
+Expected: 0 errors, 0 warnings.
 
-- [ ] **Step 3.3: Commit**
+- [ ] **Step 3: Commit**
 
 ```bash
 git add src/calculators/spiderbeam/SpiderBeamDiagram.jsx
@@ -488,14 +437,12 @@ git commit -m "feat(spiderbeam): add SVG mast diagram component"
 
 ---
 
-## Task 4: SpiderBeamResults.jsx
+## Task 4: Results Panel Component
 
 **Files:**
 - Create: `src/calculators/spiderbeam/SpiderBeamResults.jsx`
 
-Right-side panel: static mast type label, height input, clickable attachment point rows, and the transfer box.
-
-- [ ] **Step 4.1: Create `src/calculators/spiderbeam/SpiderBeamResults.jsx`**
+- [ ] **Step 1: Create `SpiderBeamResults.jsx`**
 
 ```jsx
 import { useLanguage } from '../../hooks/useLanguage.jsx'
@@ -505,251 +452,209 @@ export default function SpiderBeamResults({
   mastConfig,
   desiredHeight,
   activeGuyLevels,
+  onHeightChange,
   onToggleLevel,
   onConfigureGuyWire,
-  onNavigateToGuyWire,
-  onHeightChange,
 }) {
   const { t } = useLanguage()
-  if (!results) return null
+  const { activeSegments, inGroundtube, attachmentPoints } = results
 
-  const { attachmentPoints } = results
   const selectedPoints = attachmentPoints.filter(p => p.active)
 
-  function handleTransfer() {
-    onConfigureGuyWire({
-      mastHeight: desiredHeight,
-      levels: selectedPoints.map(p => ({ segment: p.segment, height: p.height })),
-    })
+  function handleHeightInput(e) {
+    const v = parseInt(e.target.value, 10)
+    if (!isNaN(v)) onHeightChange(Math.max(1, Math.min(mastConfig.segments, v)))
   }
 
   return (
     <div className="flex flex-col gap-4">
-
-      {/* Mast type label + height input */}
+      {/* Mast label + height input */}
       <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 flex flex-col gap-3">
         <div className="flex items-center gap-2">
-          <span className="text-xs uppercase tracking-widest text-slate-500">
-            {t('spiderBeamMastLabel')}
-          </span>
-          <span className="text-sm font-semibold text-slate-200">{mastConfig.name}</span>
+          <span className="text-xs text-slate-500 uppercase tracking-widest">{t('spiderBeamMastLabel')}:</span>
+          <span className="text-slate-200 font-semibold text-sm">{mastConfig.name}</span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-wrap">
           <label className="text-sm text-slate-400">{t('spiderBeamHeight')}</label>
           <input
             type="number"
             min={1}
             max={mastConfig.segments}
             value={desiredHeight}
-            onChange={e => onHeightChange(Math.min(mastConfig.segments, Math.max(1, Number(e.target.value))))}
-            className="w-16 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-sm text-slate-100 text-center"
+            onChange={handleHeightInput}
+            className="w-16 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-sm text-center
+              text-slate-100 focus:outline-none focus:border-blue-500"
           />
-          <span className="text-sm text-slate-400">m</span>
-          <span className="text-xs text-emerald-400 bg-emerald-900/30 border border-emerald-700/40 rounded px-2 py-0.5">
-            {t('spiderBeamSegmentsActive')}: {results.activeSegments.length}
-            {results.inGroundtube.length > 0 && (
-              <> · {results.inGroundtube.length} {t('spiderBeamInGroundtube')}</>
-            )}
-          </span>
+          <span className="text-xs text-slate-500">{t('spiderBeamHeightUnit')}</span>
+        </div>
+
+        <div className="text-xs text-green-400 bg-green-900/30 border border-green-800/50 rounded px-3 py-1.5 leading-relaxed">
+          {activeSegments.length} {t('spiderBeamSegmentsActive')}
+          {inGroundtube.length > 0 && (
+            <> &nbsp;·&nbsp; Seg.&nbsp;{inGroundtube[0]}–{inGroundtube[inGroundtube.length - 1]}&nbsp;{t('spiderBeamInGroundtube')}</>
+          )}
         </div>
       </div>
 
-      {/* Attachment points */}
-      <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
-        <p className="text-xs uppercase tracking-widest text-slate-500 mb-3">
-          {t('spiderBeamGuyLevels')}
-        </p>
-
-        <div className="flex flex-col gap-2">
-          {attachmentPoints.map(ap => {
-            const isActive = ap.active
-            return (
-              <button
-                key={ap.segment}
-                onClick={() => ap.available && onToggleLevel(ap.segment)}
-                disabled={!ap.available}
-                className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-left transition-colors ${
-                  !ap.available
-                    ? 'opacity-40 cursor-not-allowed bg-slate-800/50 border border-slate-700'
-                    : isActive
-                    ? 'bg-amber-900/20 border border-amber-700/50 hover:bg-amber-900/30'
-                    : 'bg-slate-700/40 border border-slate-600 hover:bg-slate-700'
-                }`}
-              >
-                {/* Checkbox indicator */}
-                <div className={`w-4 h-4 rounded flex-shrink-0 flex items-center justify-center ${
-                  isActive ? 'bg-amber-500' : 'border-2 border-slate-500'
-                }`}>
-                  {isActive && <span className="text-black text-xs font-bold">✓</span>}
-                </div>
-
-                <div className="flex-1">
-                  <div className={`text-sm font-medium ${isActive ? 'text-slate-100' : 'text-slate-400'}`}>
-                    Segment {ap.segment}
-                  </div>
-                  <div className={`text-xs ${isActive ? 'text-amber-400' : 'text-slate-500'}`}>
-                    {ap.available
-                      ? `${t('spiderBeamHeight')}: ${ap.height} m`
-                      : t('spiderBeamLevelInactive')}
-                  </div>
-                </div>
-
-                <span className={`text-xs px-2 py-0.5 rounded ${
-                  !ap.available
-                    ? 'text-slate-500'
-                    : isActive
-                    ? 'text-emerald-400 bg-emerald-900/30'
-                    : 'text-slate-500'
-                }`}>
-                  {ap.available ? (isActive ? t('spiderBeamLevelActive') : '—') : '—'}
-                </span>
-              </button>
-            )
-          })}
-        </div>
+      {/* Attachment point toggles */}
+      <div className="bg-slate-800 border border-slate-700 rounded-lg p-4 flex flex-col gap-2">
+        <p className="text-xs text-slate-500 uppercase tracking-widest mb-1">{t('spiderBeamGuyLevels')}</p>
+        {attachmentPoints.map(({ segment, height, available, active }) => (
+          <button
+            key={segment}
+            disabled={!available}
+            onClick={() => available && onToggleLevel(segment)}
+            className={`flex items-center gap-3 rounded-md px-3 py-2.5 text-left w-full transition-colors
+              ${available
+                ? active
+                  ? 'bg-amber-900/30 border border-amber-700/50 hover:bg-amber-900/50'
+                  : 'bg-slate-700/50 border border-slate-600 hover:bg-slate-700'
+                : 'opacity-40 bg-slate-800 border border-slate-700 cursor-not-allowed'
+              }`}
+          >
+            <div className={`w-4 h-4 rounded flex-shrink-0 flex items-center justify-center
+              ${active ? 'bg-amber-500' : 'border-2 border-slate-500'}`}>
+              {active && <span className="text-black text-xs font-bold leading-none">✓</span>}
+            </div>
+            <span className="text-sm font-medium text-slate-200 flex-1">
+              {t('spiderBeamSegment')} {segment}
+            </span>
+            {available
+              ? <span className="text-xs text-green-400 font-semibold">{height} m</span>
+              : <span className="text-xs text-slate-500">{t('spiderBeamNotActive')}</span>
+            }
+          </button>
+        ))}
       </div>
 
       {/* Transfer box */}
-      <div className="bg-indigo-950/40 border border-indigo-700/40 rounded-lg p-4">
-        <p className="text-xs uppercase tracking-widest text-indigo-400 mb-3">
-          {t('spiderBeamTransferTitle')}
-        </p>
+      <div className="bg-indigo-950/50 border border-indigo-800/50 rounded-lg p-4 flex flex-col gap-3">
+        <p className="text-xs text-indigo-400 uppercase tracking-widest">{t('spiderBeamTransferTitle')}</p>
+        <p className="text-xs text-slate-400">{t('spiderBeamTransferPreview')}</p>
 
-        {selectedPoints.length === 0 ? (
-          <p className="text-sm text-slate-500 mb-3">—</p>
-        ) : (
-          <div className="text-sm text-slate-300 mb-3 space-y-1">
-            <div>
-              <span className="text-indigo-400">{t('spiderBeamHeight')}: </span>
-              <span className="font-semibold">{desiredHeight} m</span>
+        <div className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1 text-sm">
+          <span className="text-indigo-400">{t('spiderBeamHeight')}:</span>
+          <span className="text-slate-200 font-semibold">{desiredHeight} m</span>
+          {selectedPoints.map((p, i) => (
+            <div key={p.segment} className="contents">
+              <span className="text-indigo-400">Ebene {i + 1}:</span>
+              <span className="text-slate-200">
+                {p.height} m <span className="text-slate-500 text-xs">(Seg. {p.segment})</span>
+              </span>
             </div>
-            {selectedPoints.map((p, i) => (
-              <div key={p.segment}>
-                <span className="text-indigo-400">Ebene {i + 1}: </span>
-                <span className="font-semibold">{p.height} m</span>
-                <span className="text-slate-500 text-xs ml-1">(Seg. {p.segment})</span>
-              </div>
-            ))}
-          </div>
-        )}
+          ))}
+          {selectedPoints.length === 0 && (
+            <span className="col-span-2 text-slate-500 text-xs">— keine Abspannpunkte ausgewählt</span>
+          )}
+        </div>
 
         <button
-          onClick={handleTransfer}
           disabled={selectedPoints.length === 0}
-          className={`w-full rounded-md py-2 text-sm font-semibold transition-colors ${
-            selectedPoints.length === 0
-              ? 'bg-slate-700 text-slate-500 cursor-not-allowed'
-              : 'bg-indigo-600 hover:bg-indigo-500 text-white'
-          }`}
+          onClick={() => onConfigureGuyWire({
+            mastHeight: desiredHeight,
+            levels: selectedPoints.map(p => ({ segment: p.segment, height: p.height })),
+          })}
+          className="bg-indigo-700 hover:bg-indigo-600 disabled:opacity-40 disabled:cursor-not-allowed
+            text-white text-sm font-semibold px-4 py-2 rounded-md transition-colors"
         >
           {t('spiderBeamOpenGuyWire')}
         </button>
       </div>
-
     </div>
   )
 }
 ```
 
-- [ ] **Step 4.2: Verify lint**
+- [ ] **Step 2: Run lint**
 
 ```bash
-npm run lint
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run lint
 ```
 
-Expected: no errors.
+Expected: 0 errors, 0 warnings.
 
-- [ ] **Step 4.3: Commit**
+- [ ] **Step 3: Commit**
 
 ```bash
 git add src/calculators/spiderbeam/SpiderBeamResults.jsx
-git commit -m "feat(spiderbeam): add attachment point controls and transfer box"
+git commit -m "feat(spiderbeam): add results panel with attachment point toggles and transfer box"
 ```
 
 ---
 
-## Task 5: SpiderBeamCalc.jsx
+## Task 5: Orchestrator Component
 
 **Files:**
 - Create: `src/calculators/spiderbeam/SpiderBeamCalc.jsx`
 
-Orchestrator: holds state, calls `calculateSpiderBeam` via `useMemo`, wires Diagram + Results together.
-
-- [ ] **Step 5.1: Create `src/calculators/spiderbeam/SpiderBeamCalc.jsx`**
+- [ ] **Step 1: Create `SpiderBeamCalc.jsx`**
 
 ```jsx
 import { useState, useMemo } from 'react'
 import { MAST_CONFIGS, calculateSpiderBeam } from './spiderbeam.js'
 import SpiderBeamDiagram from './SpiderBeamDiagram.jsx'
 import SpiderBeamResults from './SpiderBeamResults.jsx'
-import { useLanguage } from '../../hooks/useLanguage.jsx'
 
+// One mast type in scope for this version — no mastType state needed.
 const mastConfig = MAST_CONFIGS['14m_hd']
 
 export default function SpiderBeamCalc({
   onConfigureGuyWire = () => {},
   onNavigateToGuyWire = () => {},
 }) {
-  const { t } = useLanguage()
-  const [desiredHeight, setDesiredHeight] = useState(14)
-  const [activeGuyLevels, setActiveGuyLevels] = useState([10, 12, 14])
+  const [desiredHeight, setDesiredHeight] = useState(mastConfig.segments)
+  const [activeGuyLevels, setActiveGuyLevels] = useState([...mastConfig.guyLevels])
 
-  const results = useMemo(() => {
-    try {
-      return { ...calculateSpiderBeam({ mastConfig, desiredHeight, activeGuyLevels }), desiredHeight }
-    } catch {
-      return null
-    }
-  }, [desiredHeight, activeGuyLevels])
+  const results = useMemo(
+    () => calculateSpiderBeam({ mastConfig, desiredHeight, activeGuyLevels }),
+    [desiredHeight, activeGuyLevels]
+  )
 
   function handleToggleLevel(segment) {
     setActiveGuyLevels(prev =>
-      prev.includes(segment) ? prev.filter(s => s !== segment) : [...prev, segment]
+      prev.includes(segment) ? prev.filter(n => n !== segment) : [...prev, segment]
     )
+  }
+
+  function handleHeightChange(newHeight) {
+    // Deactivate attachment points that become unavailable at the new height.
+    // Recalculate availability with current activeGuyLevels, then filter.
+    const next = calculateSpiderBeam({ mastConfig, desiredHeight: newHeight, activeGuyLevels })
+    const availableSegments = next.attachmentPoints.filter(p => p.available).map(p => p.segment)
+    setActiveGuyLevels(prev => prev.filter(n => availableSegments.includes(n)))
+    setDesiredHeight(newHeight)
   }
 
   return (
     <div className="flex flex-col gap-4">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <SpiderBeamDiagram results={results} />
+        <SpiderBeamDiagram config={{ desiredHeight }} results={results} />
         <SpiderBeamResults
           results={results}
           mastConfig={mastConfig}
           desiredHeight={desiredHeight}
           activeGuyLevels={activeGuyLevels}
-          onHeightChange={setDesiredHeight}
+          onHeightChange={handleHeightChange}
           onToggleLevel={handleToggleLevel}
           onConfigureGuyWire={onConfigureGuyWire}
           onNavigateToGuyWire={onNavigateToGuyWire}
         />
       </div>
-
-      <p className="text-xs text-amber-300/80 bg-amber-500/10 border border-amber-500/40 rounded-lg px-4 py-3 leading-relaxed">
-        ⚠️ {t('windLoadDisclaimer')}
-      </p>
     </div>
   )
 }
 ```
 
-- [ ] **Step 5.2: Run full test suite**
+- [ ] **Step 2: Run lint**
 
 ```bash
-npm run test
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run lint
 ```
 
-Expected: all tests pass.
+Expected: 0 errors, 0 warnings.
 
-- [ ] **Step 5.3: Verify lint**
-
-```bash
-npm run lint
-```
-
-Expected: no errors.
-
-- [ ] **Step 5.4: Commit**
+- [ ] **Step 3: Commit**
 
 ```bash
 git add src/calculators/spiderbeam/SpiderBeamCalc.jsx
@@ -758,288 +663,246 @@ git commit -m "feat(spiderbeam): add orchestrator component"
 
 ---
 
-## Task 6: Sidebar — Add Entry
-
-**Files:**
-- Modify: `src/components/Sidebar.jsx`
-
-Add the `spiderbeam` entry as the first item in the `CALCULATORS` array (so it appears at the top).
-
-- [ ] **Step 6.1: Edit `src/components/Sidebar.jsx`**
-
-Replace:
-
-```js
-const CALCULATORS = [
-  { id: 'guywire', labelKey: 'calcGuyWire', subtitleKey: 'calcGuyWireSubtitle', active: true },
-  { id: 'windload', labelKey: 'calcWindLoad', subtitleKey: 'calcWindLoadSubtitle', active: true },
-]
-```
-
-With:
-
-```js
-const CALCULATORS = [
-  { id: 'spiderbeam', labelKey: 'calcSpiderBeam', subtitleKey: 'calcSpiderBeamSubtitle', active: true },
-  { id: 'guywire', labelKey: 'calcGuyWire', subtitleKey: 'calcGuyWireSubtitle', active: true },
-  { id: 'windload', labelKey: 'calcWindLoad', subtitleKey: 'calcWindLoadSubtitle', active: true },
-]
-```
-
-- [ ] **Step 6.2: Verify lint**
-
-```bash
-npm run lint
-```
-
-- [ ] **Step 6.3: Commit**
-
-```bash
-git add src/components/Sidebar.jsx
-git commit -m "feat(sidebar): add Spider Beam Mast-Konfigurator entry"
-```
-
----
-
-## Task 7: GuyWireCalc — Prefill Prop
+## Task 6: GuyWireCalc Prefill
 
 **Files:**
 - Modify: `src/calculators/guywire/GuyWireCalc.jsx`
 
-Add a `prefill` prop. When it changes to a non-null value, overwrite the internal config (mastHeight + level heights) and sync `sharedMastHeight`.
-
-- [ ] **Step 7.1: Edit `src/calculators/guywire/GuyWireCalc.jsx`**
-
-Change the function signature (line 20) from:
-
+Current signature (line 20):
 ```js
 export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindLoad = () => {}, mastHeight = null, onMastHeightChange = () => {}, onGuyWireChange = () => {} }) {
 ```
 
-To:
+- [ ] **Step 1: Add `prefill = null` to the function signature**
 
+New signature:
 ```js
 export default function GuyWireCalc({ windLoadSnapshot = null, onNavigateToWindLoad = () => {}, mastHeight = null, onMastHeightChange = () => {}, onGuyWireChange = () => {}, prefill = null }) {
 ```
 
-After the existing `useEffect([mastHeight])` block (after line 27), add:
+- [ ] **Step 2: Add prefill `useEffect` after the existing `useEffect([mastHeight])` (after line 27)**
 
 ```js
-  useEffect(() => {
-    if (!prefill) return
-    setConfig(c => ({
-      ...c,
-      mastHeight: prefill.mastHeight,
-      levels: prefill.levels.length,
-      // Preserve all 3 levelConfig slots — only overwrite the first n entries
-      levelConfig: c.levelConfig.map((existing, i) =>
-        i < prefill.levels.length
-          ? { ...existing, height: prefill.levels[i].height }
-          : existing
-      ),
-    }))
-    onMastHeightChange(prefill.mastHeight)
-  }, [prefill]) // eslint-disable-line react-hooks/exhaustive-deps
+useEffect(() => {
+  if (!prefill) return
+  setConfig(c => ({
+    ...c,
+    mastHeight: prefill.mastHeight,
+    levels: prefill.levels.length,
+    // Map over existing levelConfig — only overwrite height for prefilled levels,
+    // keep radius/wires from existing config (prevents undefined entries).
+    levelConfig: c.levelConfig.map((existing, i) =>
+      i < prefill.levels.length
+        ? { ...existing, height: prefill.levels[i].height }
+        : existing
+    ),
+  }))
+  onMastHeightChange(prefill.mastHeight)
+}, [prefill]) // eslint-disable-line react-hooks/exhaustive-deps
 ```
 
-- [ ] **Step 7.2: Run full test suite**
+- [ ] **Step 3: Run all tests**
 
 ```bash
-npm run test
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run test
 ```
 
-Expected: all tests pass (existing GuyWire tests still green).
+Expected: All tests PASS.
 
-- [ ] **Step 7.3: Verify lint**
+- [ ] **Step 4: Run lint**
 
 ```bash
-npm run lint
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run lint
 ```
 
-- [ ] **Step 7.4: Commit**
+Expected: 0 errors, 0 warnings.
+
+- [ ] **Step 5: Commit**
 
 ```bash
 git add src/calculators/guywire/GuyWireCalc.jsx
-git commit -m "feat(guywire): add prefill prop for Spider Beam transfer"
+git commit -m "feat(guywire): add prefill prop for Spider Beam config transfer"
 ```
 
 ---
 
-## Task 8: App.jsx — Wire Everything Together
+## Task 7: App.jsx + Sidebar.jsx Wiring
 
 **Files:**
+- Modify: `src/components/Sidebar.jsx`
 - Modify: `src/App.jsx`
 
-Add `SpiderBeamCalc` to the render tree, two new states for the transfer dialog, and the inline confirmation modal.
+- [ ] **Step 1: Add spiderbeam entry to Sidebar**
 
-- [ ] **Step 8.1: Add import to `src/App.jsx`**
+In `src/components/Sidebar.jsx`, replace the `CALCULATORS` array with:
 
-After the existing imports at the top of `App.jsx`, add:
+```js
+const CALCULATORS = [
+  { id: 'guywire', labelKey: 'calcGuyWire', subtitleKey: 'calcGuyWireSubtitle', active: true },
+  { id: 'windload', labelKey: 'calcWindLoad', subtitleKey: 'calcWindLoadSubtitle', active: true },
+  { id: 'spiderbeam', labelKey: 'calcSpiderBeam', subtitleKey: 'calcSpiderBeamSubtitle', active: true },
+]
+```
+
+- [ ] **Step 2: Add import in App.jsx**
+
+After the existing imports in `src/App.jsx`, add:
 
 ```js
 import SpiderBeamCalc from './calculators/spiderbeam/SpiderBeamCalc.jsx'
 ```
 
-- [ ] **Step 8.2: Add two new states**
+- [ ] **Step 3: Add pendingPrefill + confirmedPrefill state in App.jsx**
 
-After `const [drawerOpen, setDrawerOpen] = useState(false)` (line 13), add:
+After `const [drawerOpen, setDrawerOpen] = useState(false)`, add:
 
 ```js
-  const [pendingPrefill, setPendingPrefill] = useState(null)
-  const [confirmedPrefill, setConfirmedPrefill] = useState(null)
+const [pendingPrefill, setPendingPrefill] = useState(null)
+const [confirmedPrefill, setConfirmedPrefill] = useState(null)
 ```
 
-- [ ] **Step 8.3: Add `prefill` prop to GuyWireCalc render**
+- [ ] **Step 4: Add `prefill={confirmedPrefill}` to GuyWireCalc render**
 
-Find the existing `<GuyWireCalc` block and add `prefill={confirmedPrefill}`:
+Existing `<GuyWireCalc ...>` block — add the prop:
 
 ```jsx
-            <GuyWireCalc
-              windLoadSnapshot={windLoadSnapshot}
-              onNavigateToWindLoad={() => setActiveCalc('windload')}
-              mastHeight={sharedMastHeight}
-              onMastHeightChange={setSharedMastHeight}
-              onGuyWireChange={setGuyWireSnapshot}
-              prefill={confirmedPrefill}
-            />
+<GuyWireCalc
+  windLoadSnapshot={windLoadSnapshot}
+  onNavigateToWindLoad={() => setActiveCalc('windload')}
+  mastHeight={sharedMastHeight}
+  onMastHeightChange={setSharedMastHeight}
+  onGuyWireChange={setGuyWireSnapshot}
+  prefill={confirmedPrefill}
+/>
 ```
 
-- [ ] **Step 8.4: Add SpiderBeamCalc render block**
-
-After the WindLoadCalc `</div>` block and before the closing `</main>` footer, add:
+- [ ] **Step 5: Add SpiderBeamCalc block after the WindLoadCalc block (before `<footer>`)**
 
 ```jsx
-          <div className={activeCalc === 'spiderbeam' ? '' : 'hidden'}>
-            <SpiderBeamCalc
-              onConfigureGuyWire={setPendingPrefill}
-              onNavigateToGuyWire={() => setActiveCalc('guywire')}
-            />
+<div className={activeCalc === 'spiderbeam' ? '' : 'hidden'}>
+  <SpiderBeamCalc
+    onConfigureGuyWire={setPendingPrefill}
+    onNavigateToGuyWire={() => setActiveCalc('guywire')}
+  />
+</div>
+```
+
+- [ ] **Step 6: Add confirmation dialog inside `<main>`, just before `<footer>`**
+
+```jsx
+{pendingPrefill && (
+  <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div className="bg-slate-800 border border-slate-700 rounded-xl p-6 max-w-sm w-full flex flex-col gap-4 shadow-2xl">
+      <h2 className="text-base font-semibold text-slate-100">{t('spiderBeamConfirmTitle')}</h2>
+      <p className="text-sm text-slate-400">{t('spiderBeamConfirmBody')}</p>
+      <div className="text-sm bg-slate-700/50 rounded-lg px-4 py-3 flex flex-col gap-1">
+        <div>
+          <span className="text-slate-500">Masthöhe: </span>
+          <span className="text-slate-200 font-semibold">{pendingPrefill.mastHeight} m</span>
+        </div>
+        {pendingPrefill.levels.map((lvl, i) => (
+          <div key={lvl.segment}>
+            <span className="text-slate-500">Ebene {i + 1}: </span>
+            <span className="text-slate-200">{lvl.height} m</span>
+            <span className="text-slate-500 text-xs"> (Seg. {lvl.segment})</span>
           </div>
+        ))}
+      </div>
+      <div className="flex gap-3 justify-end">
+        <button
+          onClick={() => setPendingPrefill(null)}
+          className="px-4 py-2 text-sm text-slate-300 hover:text-slate-100 bg-slate-700 hover:bg-slate-600 rounded-md transition-colors"
+        >
+          {t('spiderBeamConfirmCancel')}
+        </button>
+        <button
+          onClick={() => {
+            setConfirmedPrefill(pendingPrefill)
+            setActiveCalc('guywire')
+            setPendingPrefill(null)
+          }}
+          className="px-4 py-2 text-sm font-semibold text-white bg-indigo-700 hover:bg-indigo-600 rounded-md transition-colors"
+        >
+          {t('spiderBeamConfirmYes')}
+        </button>
+      </div>
+    </div>
+  </div>
+)}
 ```
 
-- [ ] **Step 8.5: Add confirmation dialog**
-
-Inside the `{/* Body */}` div, after the overlay backdrop div (after the `drawerOpen && <div … />` block), add:
-
-```jsx
-        {/* Spider Beam → Guy Wire transfer confirmation dialog */}
-        {pendingPrefill && (
-          <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
-            <div className="bg-slate-800 border border-slate-600 rounded-xl p-6 max-w-sm w-full shadow-2xl">
-              <h2 className="text-base font-semibold text-slate-100 mb-1">
-                {t('spiderBeamConfirmTitle')}
-              </h2>
-              <p className="text-sm text-slate-400 mb-3">{t('spiderBeamConfirmBody')}</p>
-              <div className="text-sm text-slate-200 mb-4 space-y-1">
-                <div>
-                  <span className="text-slate-400">{t('spiderBeamHeight')}: </span>
-                  <span className="font-semibold">{pendingPrefill.mastHeight} m</span>
-                </div>
-                {pendingPrefill.levels.map((lvl, i) => (
-                  <div key={lvl.segment}>
-                    <span className="text-slate-400">Ebene {i + 1}: </span>
-                    <span className="font-semibold">{lvl.height} m</span>
-                    <span className="text-slate-500 text-xs ml-1">(Seg. {lvl.segment})</span>
-                  </div>
-                ))}
-              </div>
-              <div className="flex gap-2 justify-end">
-                <button
-                  onClick={() => setPendingPrefill(null)}
-                  className="px-4 py-2 rounded-md text-sm text-slate-300 bg-slate-700 hover:bg-slate-600 transition-colors"
-                >
-                  {t('spiderBeamConfirmCancel')}
-                </button>
-                <button
-                  onClick={() => {
-                    setConfirmedPrefill(pendingPrefill)
-                    setActiveCalc('guywire')
-                    setPendingPrefill(null)
-                  }}
-                  className="px-4 py-2 rounded-md text-sm text-white bg-indigo-600 hover:bg-indigo-500 transition-colors font-semibold"
-                >
-                  {t('spiderBeamConfirmYes')}
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
-```
-
-- [ ] **Step 8.6: Run full test suite**
+- [ ] **Step 7: Run all tests**
 
 ```bash
-npm run test
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run test
 ```
 
-Expected: all tests pass.
+Expected: All tests PASS.
 
-- [ ] **Step 8.7: Verify lint**
+- [ ] **Step 8: Run lint**
 
 ```bash
-npm run lint
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run lint
 ```
 
-Expected: no errors, no warnings.
+Expected: 0 errors, 0 warnings.
 
-- [ ] **Step 8.8: Start dev server and do a manual smoke test**
+- [ ] **Step 9: Manual smoke test with dev server**
 
 ```bash
-npm run dev
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run dev
 ```
 
-Open `http://localhost:5173`. Check:
+Verify in browser (http://localhost:5173):
+- [ ] "Spider Beam" entry appears in sidebar
+- [ ] Clicking it shows the mast diagram + results panel
+- [ ] Diagram shows 14m mast with Grundrohr (blue) + active trapezoid + 3 yellow attachment points
+- [ ] Changing height to 12 → label shows "Seg. 2–3 im Grundrohr", heights become 7/9/11 m
+- [ ] Clicking an attachment point toggles it (yellow ↔ grey in diagram, checked ↔ unchecked in panel)
+- [ ] Transfer box updates immediately when toggling
+- [ ] "Abspannungs-Rechner öffnen" opens the confirmation dialog
+- [ ] "Abbrechen" closes dialog, guy wire calc unchanged
+- [ ] "Ja, überschreiben" navigates to guy wire calc with correct prefilled heights + mastHeight
+- [ ] Language toggle (DE/EN) translates all Spider Beam labels
 
-1. "Spider Beam" appears as first item in sidebar
-2. Click Spider Beam → Mast-Konfigurator renders with diagram and controls
-3. Change height to 12 → diagram updates, status badge shows "Segmente ausgezogen: 11 · 2 im Grundrohr"
-4. Click "Seg. 14" attachment point to toggle it off → dot turns gray in diagram
-5. Click "Abspannungs-Rechner öffnen" → confirmation dialog appears with correct heights
-6. Click "Abbrechen" → dialog closes, stay on Spider Beam, Guy Wire calc NOT changed
-7. Click button again → dialog appears → click "Ja, überschreiben" → navigates to Abspannung, heights pre-filled
-8. Switch DE/EN via language toggle → all Spider Beam labels switch language
-
-- [ ] **Step 8.9: Commit**
+- [ ] **Step 10: Commit**
 
 ```bash
-git add src/App.jsx
-git commit -m "feat(app): integrate Spider Beam Mast-Konfigurator with prefill dialog"
+git add src/App.jsx src/components/Sidebar.jsx
+git commit -m "feat(spiderbeam): wire calculator into App with confirmation dialog"
 ```
 
 ---
 
-## Task 9: .gitignore — Exclude Brainstorm Files
+## Task 8: Build Verification
 
-**Files:**
-- Modify: `.gitignore`
-
-- [ ] **Step 9.1: Add `.superpowers/` to `.gitignore`**
-
-Check if `.gitignore` already excludes `.superpowers/`:
+- [ ] **Step 1: Full test run**
 
 ```bash
-grep -n superpowers .gitignore
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run test
 ```
 
-If not present, add to `.gitignore`:
+Expected: All tests PASS including `spiderbeam.test.js`.
 
-```
-# Brainstorming session files
-.superpowers/
-```
-
-- [ ] **Step 9.2: Commit**
+- [ ] **Step 2: Production build**
 
 ```bash
-git add .gitignore
-git commit -m "chore: exclude .superpowers/ brainstorm files from git"
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run build
 ```
 
----
+Expected: Build succeeds, no errors.
 
-## Completion Checklist
+- [ ] **Step 3: Standalone build**
 
-- [ ] All 7 Vitest test files pass (`npm run test`)
-- [ ] ESLint strict passes (`npm run lint` — 0 warnings, 0 errors)
-- [ ] Dev server smoke test (Task 8.8) all 8 checks pass
-- [ ] Standalone build works: `npm run build:standalone` completes without error
+```bash
+cd "d:/!GitHub/Amateur Radio Tower Designer" && npm run build:standalone
+```
+
+Expected: Build succeeds, no errors.
+
+- [ ] **Step 4: Final commit if any fixes were needed**
+
+```bash
+git add -A
+git commit -m "build: verify Spider Beam Mast-Konfigurator in production builds"
+```

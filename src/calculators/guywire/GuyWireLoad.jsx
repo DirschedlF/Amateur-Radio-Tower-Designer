@@ -43,7 +43,7 @@ export default function GuyWireLoad({ loadResult, onNavigateToWindLoad }) {
                 </th>
                 <th className="text-right pb-2 border-b border-slate-700 pr-3 whitespace-nowrap">
                   {t('colSectionForce')}
-                  <Tooltip content={<span className="text-slate-300 leading-tight">{t('sectionForceTooltip')}</span>} align="left" />
+                  <Tooltip content={<span className="text-slate-300 leading-tight">{t('sectionForceTooltip')}</span>} align="right" />
                 </th>
                 <th className="text-right pb-2 border-b border-slate-700 pr-3 whitespace-nowrap">
                   {t('colHorizPerWire')}

@@ -26,7 +26,7 @@ export default function Tooltip({ content, align = 'left' }) {
 
       {visible && (
         <div
-          className={`absolute top-5 z-50 w-72 bg-slate-900 border border-slate-600 rounded-lg p-3 shadow-xl text-xs text-slate-300 ${align === 'right' ? 'right-0' : 'left-0'}`}
+          className={`absolute top-5 z-50 w-72 whitespace-normal text-left bg-slate-900 border border-slate-600 rounded-lg p-3 shadow-xl text-xs text-slate-300 ${align === 'right' ? 'right-0' : 'left-0'}`}
           onMouseEnter={() => setVisible(true)}
           onMouseLeave={() => setVisible(false)}
         >

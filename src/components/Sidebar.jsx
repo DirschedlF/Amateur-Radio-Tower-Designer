@@ -3,6 +3,7 @@ import { useLanguage } from '../hooks/useLanguage.jsx'
 const CALCULATORS = [
   { id: 'guywire', labelKey: 'calcGuyWire', subtitleKey: 'calcGuyWireSubtitle', active: true },
   { id: 'windload', labelKey: 'calcWindLoad', subtitleKey: 'calcWindLoadSubtitle', active: true },
+  { id: 'spiderbeam', labelKey: 'calcSpiderBeam', subtitleKey: 'calcSpiderBeamSubtitle', active: true },
 ]
 
 export default function Sidebar({ activeCalc, onSelect, isOpen = false, onClose = () => {} }) {

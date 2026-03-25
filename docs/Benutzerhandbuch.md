@@ -6,12 +6,37 @@ Dieses Handbuch erklärt Schritt für Schritt, wie du den Mast-Designer verwende
 
 ## Überblick
 
-Der Mast-Designer besteht aus zwei Rechnern, die zusammenarbeiten:
+Der Mast-Designer besteht aus drei Rechnern:
 
 1. **Windlast-Rechner** — berechnet die Windkräfte auf Mast und Antenne
 2. **Abspannungsrechner** — berechnet Drahtlängen, Winkel und — kombiniert mit der Windlast — die Spannung in jedem Abspanndraht
+3. **Spider Beam Mast-Konfigurator** — ermittelt für einen Spiderbeam-Teleskop-Mast, welche Segmente ausgezogen sind und auf welchen Höhen die Abspannpunkte liegen; überträgt die Konfiguration per Knopfdruck in den Abspannungsrechner
 
-Du kannst beide Rechner unabhängig voneinander verwenden. Für die vollständige Lastberechnung (Drahtspannungen) benötigst du jedoch beide.
+Du kannst die Rechner 1 und 2 unabhängig voneinander verwenden. Für die vollständige Lastberechnung (Drahtspannungen) benötigst du jedoch beide. Wenn du einen Spiderbeam-Mast verwendest, empfiehlt sich der Einstieg über den Konfigurator (Rechner 3).
+
+---
+
+## (Optional) Spider Beam Mast-Konfigurator
+
+Wenn du einen **Spiderbeam 14m HD**-Teleskop-Mast verwendest, starte hier. Der Konfigurator ermittelt aus der gewünschten Masthöhe automatisch, welche Segmente ausgezogen sind und auf welchen absoluten Höhen die Abspannpunkte liegen.
+
+### Masthöhe wählen
+
+Gib die gewünschte Masthöhe in ganzen Metern ein (1–14 m). Das SVG-Diagramm auf der linken Seite zeigt den Mast mit Grundrohr, ausgezogenen Segmenten und den Abspannpunkten.
+
+> **Wie der Teleskop-Mast funktioniert:** Segment 1 ist das Grundrohr (immer am Boden). Segmente werden von oben herausgezogen — zuerst Segment 14 (Spitze), dann 13, 12 usw. Bei einem 10-m-Mast bleiben die Segmente 2–5 im Grundrohr; Segmente 6–14 sind ausgezogen.
+
+### Abspannpunkte wählen
+
+Der Konfigurator zeigt drei mögliche Abspannpunkte an (am unteren Ende von Segment 10, 12 und 14). Verfügbare Punkte (ausgezogene Segmente) können per Klick aktiviert oder deaktiviert werden. Nicht verfügbare Punkte (noch im Grundrohr) sind ausgegraut.
+
+Für jeden aktiven Abspannpunkt wird die tatsächliche Höhe über Grund angezeigt.
+
+### Konfiguration übertragen
+
+Ein Klick auf **„In Abspannungsrechner übernehmen"** öffnet einen Bestätigungsdialog, der die Masthöhe und die Höhen der aktiven Abspannpunkte zusammenfasst. Nach Bestätigung wechselt die App automatisch zum Abspannungsrechner und trägt die Werte ein.
+
+> **Hinweis:** Nur Höhe und Anzahl der Ebenen werden übertragen. Ankerradius und Drahtanzahl pro Ebene musst du im Abspannungsrechner manuell ergänzen.
 
 ---
 

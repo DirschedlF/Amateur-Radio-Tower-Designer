@@ -247,7 +247,50 @@ T_kgf = T / 9,81
 
 ---
 
-## 4. Hinweise und Grenzen
+## 4. Spider Beam Mast-Konfigurator — Teleskop-Segmentlogik
+
+### 4.1 Methode
+
+Der Konfigurator berechnet für einen Teleskop-Mast (Spiderbeam 14m HD), welche Segmente aus dem Grundrohr herausgezogen sind und auf welchen absoluten Höhen die Abspannpunkte liegen.
+
+### 4.2 Eingaben
+
+| Größe | Symbol | Einheit | Beschreibung |
+| ----- | ------ | ------- | ------------ |
+| Gewünschte Masthöhe | H | m | Ganzzahlig, 1–14 m |
+| Segmentanzahl | S | — | Anzahl der Teleskopsegmente (14 beim 14m HD) |
+| Segmentlänge | l | m | Länge je Segment (1,0 m) |
+| Abspannpunkte | — | — | Segmentnummern mit Abspannöse (10, 12, 14) |
+
+### 4.3 Berechnungen
+
+**Erstes aktives Segment** (unterste nicht im Grundrohr verbliebene Einheit):
+
+```text
+firstActive = S + 2 − H
+```
+
+Segmente mit Nummer ≥ `firstActive` sind ausgezogen; alle darunter verbleiben im Grundrohr. Segment 1 (Grundrohr) bleibt immer am Boden und zählt nicht als aktives Segment.
+
+**Höhe eines Abspannpunkts** (Segment N ausgezogen):
+
+```text
+h_N = H + N − (S + 1)
+```
+
+*Beispiel (H = 10, S = 14, N = 10):* `h_10 = 10 + 10 − 15 = 5 m`
+
+*Beispiel (H = 14, S = 14, N = 14):* `h_14 = 14 + 14 − 15 = 13 m` — Spitze auf 13 m, da Segment 14 einen Meter über dem vorletzten endet.
+
+### 4.4 Annahmen
+
+- Jedes Segment hat exakt eine Länge von 1,0 m.
+- Ein Segment ist entweder vollständig ausgezogen oder vollständig im Grundrohr.
+- Der Abspannpunkt liegt am **unteren Ende** des jeweiligen Segments.
+
+---
+
+## 5. Hinweise und Grenzen
 
 Die Berechnungen in diesem Tool sind **Planungsschätzungen** und kein Ersatz für eine statische Bemessung durch einen zugelassenen Tragwerksplaner. Insbesondere:
 

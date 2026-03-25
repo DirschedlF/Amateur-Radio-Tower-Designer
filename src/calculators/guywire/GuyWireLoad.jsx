@@ -1,4 +1,5 @@
 import { useLanguage } from '../../hooks/useLanguage.jsx'
+import Tooltip from '../../components/Tooltip.jsx'
 
 const LEVEL_COLORS = ['text-emerald-400', 'text-amber-400', 'text-red-400', 'text-purple-400']
 
@@ -42,6 +43,7 @@ export default function GuyWireLoad({ loadResult, onNavigateToWindLoad }) {
                 </th>
                 <th className="text-right pb-2 border-b border-slate-700 pr-3 whitespace-nowrap">
                   {t('colSectionForce')}
+                  <Tooltip content={<span className="text-slate-300 leading-tight">{t('sectionForceTooltip')}</span>} align="left" />
                 </th>
                 <th className="text-right pb-2 border-b border-slate-700 pr-3 whitespace-nowrap">
                   {t('colHorizPerWire')}
